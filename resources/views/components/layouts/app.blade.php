@@ -13,8 +13,10 @@
 <flux:sidebar sticky stashable class="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-    <flux:brand href="#" logo="https://fluxui.dev/img/demo/logo.png" name="StaffUp Portal" class="px-2 dark:hidden" />
-    <flux:brand href="#" logo="https://fluxui.dev/img/demo/dark-mode-logo.png" name="StaffUp Portal" class="px-2 hidden dark:flex" />
+    <a href="#" class="flex items-center px-2">
+        <img src="{{ asset('images/logo.svg') }}" alt="StaffUp Logo" class="w-[160px] h-auto dark:hidden" />
+        <img src="{{ asset('images/logo.svg') }}" alt="StaffUp Logo" class="w-[160px] h-auto hidden dark:flex" />
+    </a>
 
     <!-- ✅ Updated Sidebar Navigation -->
     <flux:navlist variant="outline">
