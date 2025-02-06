@@ -15,44 +15,36 @@
 
     <a href="#" class="flex items-center px-2">
         <img src="{{ asset('images/logo.svg') }}" alt="StaffUp Logo" class="w-[160px] h-auto dark:hidden" />
-        <img src="{{ asset('images/logo.svg') }}" alt="StaffUp Logo" class="w-[160px] h-auto hidden dark:flex" />
+        <img src="{{ asset('images/logo-white.svg') }}" alt="StaffUp Logo" class="w-[160px] h-auto hidden dark:flex" />
     </a>
 
-    <!-- ✅ Updated Sidebar Navigation -->
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="/">Home</flux:navlist.item>
         <flux:navlist.item icon="book-open" href="#">Resources</flux:navlist.item>
         <flux:navlist.item icon="question-mark-circle" href="#">FAQ</flux:navlist.item>
     </flux:navlist>
-
     <flux:spacer />
 
-    <!-- Settings & Help Section -->
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="cog-6-tooth" href="#">Settings</flux:navlist.item>
+        <div class="relative">
+            <flux:dropdown x-data align="end">
+                <flux:navlist.item as="button" icon="paint-brush" class="w-full">
+                    Appearance
+                </flux:navlist.item>
+                <flux:menu>
+                    <flux:menu.item icon="sun" x-on:click="$flux.appearance = 'light'">Light</flux:menu.item>
+                    <flux:menu.item icon="moon" x-on:click="$flux.appearance = 'dark'">Dark</flux:menu.item>
+                    <flux:menu.item icon="computer-desktop" x-on:click="$flux.appearance = 'system'">System</flux:menu.item>
+                </flux:menu>
+            </flux:dropdown>
+        </div>
         <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>
     </flux:navlist>
 </flux:sidebar>
 
 <flux:header class="lg:hidden">
     <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
     <flux:spacer />
-
-    <flux:dropdown position="top" align="start">
-        <flux:profile avatar="https://fluxui.dev/img/demo/user.png" />
-
-        <flux:menu>
-            <flux:menu.radio.group>
-                <flux:menu.radio checked>Olivia Martin</flux:menu.radio>
-                <flux:menu.radio>Truly Delta</flux:menu.radio>
-            </flux:menu.radio.group>
-
-            <flux:menu.separator />
-
-            <flux:menu.item icon="arrow-right-start-on-rectangle">Logout</flux:menu.item>
-        </flux:menu>
-    </flux:dropdown>
 </flux:header>
 {{ $slot }}
 @livewireScripts
