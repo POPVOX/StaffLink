@@ -25,6 +25,10 @@ export default {
                     content: 'var(--color-accent-content)',
                     foreground: 'var(--color-accent-foreground)',
                 },
+
+                'pvox-orange': '#FD8161',
+                'pvox-dark': '#2d3748',
+                'pvox-link-dark': '#ff653f',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

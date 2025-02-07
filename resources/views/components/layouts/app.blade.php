@@ -21,7 +21,7 @@
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="/">Home</flux:navlist.item>
         <flux:navlist.item icon="book-open" href="#">Resources</flux:navlist.item>
-        <flux:navlist.item icon="question-mark-circle" href="#">FAQ</flux:navlist.item>
+        <flux:navlist.item icon="question-mark-circle" href="/faq">FAQ</flux:navlist.item>
     </flux:navlist>
     <flux:spacer />
 
