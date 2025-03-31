@@ -66,7 +66,7 @@ class DocumentProcessingService
         // Store chunks in Pinecone
         $this->pineconeService->storeChunks($chunks, $documentId);
 
-        return "✅ Text file processed successfully!";
+        return "✅ Text file " . $documentId . " processed successfully!";
     }
 
 }

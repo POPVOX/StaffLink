@@ -1,4 +1,4 @@
-<flux:main class="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-zinc-800">
+<flux:main class="min-h-screen bg-white dark:bg-zinc-800">
     <div class="mx-auto max-w-7xl px-6 py-4 sm:pt-6 lg:px-8 lg:py-8">
         <div class="lg:grid lg:grid-cols-12 lg:gap-8">
                 <div class="lg:col-span-5">

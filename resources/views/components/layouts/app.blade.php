@@ -20,7 +20,8 @@
 
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="/">Home</flux:navlist.item>
-        <flux:navlist.item icon="book-open" href="#">Resources</flux:navlist.item>
+        <flux:navlist.item icon="book-open" href="/resources">Resources</flux:navlist.item>
+        <flux:navlist.item icon="information-circle" href="/about">About</flux:navlist.item>
         <flux:navlist.item icon="question-mark-circle" href="/faq">FAQ</flux:navlist.item>
     </flux:navlist>
     <flux:spacer />
@@ -38,7 +39,7 @@
                 </flux:menu>
             </flux:dropdown>
         </div>
-        <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>
+{{--        <flux:navlist.item icon="information-circle" href="#">Help</flux:navlist.item>--}}
     </flux:navlist>
 </flux:sidebar>
 
