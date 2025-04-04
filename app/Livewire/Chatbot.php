@@ -34,6 +34,8 @@ class Chatbot extends Component
                 'content' => "<p>👋 Hi there! I'm your congressional office assistant. I can help answer questions about legislative processes, security, and compliance. Just ask!</p>",
             ]);
         }
+
+        $this->dispatch('scrollToBottom');
     }
 
     public function sendMessage()
@@ -52,7 +54,7 @@ class Chatbot extends Component
 
         // Show typing indicator
         $this->botTyping = true;
-        $this->dispatch('scroll-to-bottom');
+        $this->dispatch('scrollToBottom');
 
         // Capture user input before clearing
         $userMessage = $this->message;
@@ -94,7 +96,7 @@ class Chatbot extends Component
         $this->conversation->refresh();
 
         $this->botTyping = false;
-        $this->dispatch('scroll-to-bottom');
+        $this->dispatch('scrollToBottom');
     }
 
     public function render()

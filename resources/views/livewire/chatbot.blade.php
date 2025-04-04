@@ -28,14 +28,18 @@
                 [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300">
                                 {!! $message->content !!}
                             </div>
-                            <span class="ml-auto text-xs text-sky-600 dark:text-sky-400">{{ $message->created_at->format('h:i A') }}</span>
+                            <span class="timestamp ml-auto text-xs text-sky-600 dark:text-sky-400" data-utc="{{ $message->created_at->toIso8601String() }}">
+    {{ $message->created_at->format('h:i A') }}
+</span>
                         </div>
                     @else
                         <div class="ml-auto flex max-w-[80%] md:max-w-[75%] flex-col gap-2 rounded-l-lg rounded-tr-lg bg-sky-600 p-4 text-base text-white dark:bg-sky-500">
                             <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]">
                                 <p>{{ $message->content }}</p>
                             </div>
-                            <span class="ml-auto text-xs text-sky-200">{{ $message->created_at->format('h:i A') }}</span>
+                            <span class="timestamp ml-auto text-xs text-sky-200" data-utc="{{ $message->created_at->toIso8601String() }}">
+    {{ $message->created_at->format('h:i A') }}
+</span>
                         </div>
                         <span class="flex size-10 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-50 text-sm font-bold tracking-wider text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">U</span>
                     @endif
@@ -67,7 +71,15 @@
 
 @script
 <script>
-    $wire.on('scroll-to-bottom', () => {
+    $wire.on('scrollToBottom', () => {
+        document.querySelectorAll('.timestamp').forEach(el => {
+            const utcTime = el.getAttribute('data-utc');
+            if (utcTime) {
+                const date = new Date(utcTime);
+                el.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+        });
+
         const container = document.getElementById('chatbox');
         setTimeout(() => {
             if (container) {
