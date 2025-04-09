@@ -24,7 +24,7 @@ class OpenAIService
     public function getChatResponse(array $messages): string
     {
         $response = $this->client->chat()->create([
-            'model' => 'gpt-4-turbo',
+            'model' => 'chatgpt-4o-latest',
             'messages' => $messages,
             'temperature' => 0.3, // Lowered to reduce creativity
             'top_p' => 0.9, // Slightly lower to make the output more focused
