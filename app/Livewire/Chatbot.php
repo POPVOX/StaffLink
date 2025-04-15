@@ -31,7 +31,7 @@ class Chatbot extends Component
             Message::create([
                 'conversation_id' => $this->conversation->id,
                 'role' => 'assistant',
-                'content' => "<p>👋 Hi there! I'm your congressional office assistant. I can help answer questions about legislative processes, security, and compliance. Just ask!</p>",
+                'content' => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
             ]);
         }
 

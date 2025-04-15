@@ -5,7 +5,7 @@
             Good afternoon!
         </flux:heading>
         <flux:subheading size="lg" class="text-center text-gray-600 dark:text-gray-400 mb-4">
-            Welcome to the StaffUp portal
+            Welcome to the StaffUp chatbot
         </flux:subheading>
         <flux:separator variant="subtle" class="mb-4" />
 
@@ -21,7 +21,7 @@
                     @if($message->role === 'assistant')
                         <img class="size-10 rounded-full object-cover" src="https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp" alt="bot-avatar" />
                         <div class="mr-auto flex max-w-[75%] md:max-w-[65%] flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-4 text-sky-900 dark:bg-sky-900 dark:text-sky-100">
-                            <span class="font-semibold text-sky-900 dark:text-sky-50">Chatbot</span>
+                            <span class="font-semibold text-sky-900 dark:text-sky-50">StaffUp Bot</span>
                             <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]
                 [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400 dark:[&_ul]:marker:text-sky-500
                 [&_li]:mb-1
