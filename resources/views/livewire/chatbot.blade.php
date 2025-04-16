@@ -2,7 +2,7 @@
     <div class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
         <!-- Chat Header -->
         <flux:heading size="xl" level="1" class="text-center text-sky-700 dark:text-sky-300 mt-4">
-            Good afternoon!
+            <span id="greeting">Hello!</span>
         </flux:heading>
         <flux:subheading size="lg" class="text-center text-gray-600 dark:text-gray-400 mb-4">
             Welcome to the StaffUp chatbot
@@ -19,7 +19,12 @@
                      x-transition.opacity.scale.90.duration.300ms class="flex items-end gap-3"
                 >
                     @if($message->role === 'assistant')
-                        <img class="size-10 rounded-full object-cover" src="https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp" alt="bot-avatar" />
+                        <span class="flex size-10 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-50 text-sm font-bold tracking-wider text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" />
+</svg>
+
+                        </span>
                         <div class="mr-auto flex max-w-[75%] md:max-w-[65%] flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-4 text-sky-900 dark:bg-sky-900 dark:text-sky-100">
                             <span class="font-semibold text-sky-900 dark:text-sky-50">StaffUp Bot</span>
                             <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]
@@ -41,14 +46,23 @@
     {{ $message->created_at->format('h:i A') }}
 </span>
                         </div>
-                        <span class="flex size-10 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-50 text-sm font-bold tracking-wider text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">U</span>
+                        <span class="flex size-10 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-50 text-sm font-bold tracking-wider text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+</svg>
+
+                        </span>
                     @endif
                 </div>
             @endforeach
 
             <!-- Typing Indicator -->
             <div x-show="$wire.botTyping" class="flex items-end gap-3">
-                <img class="size-10 rounded-full object-cover" src="https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp" alt="avatar" />
+                <span class="flex size-10 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-50 text-sm font-bold tracking-wider text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" />
+</svg>
+                        </span>
                 <div class="flex gap-1">
                     <span class="size-2 rounded-full bg-sky-600 motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-sky-300"></span>
                     <span class="size-2 rounded-full bg-sky-600 motion-safe:animate-[bounce_0.5s_ease-in-out_infinite] dark:bg-sky-300"></span>
@@ -71,7 +85,26 @@
 
 @script
 <script>
-    $wire.on('scrollToBottom', () => {
+    window.updateGreeting = function() {
+        const currentHour = new Date().getHours();
+        let greeting = '';
+
+        if (currentHour < 12) {
+            greeting = 'Good morning!';
+        } else if (currentHour < 18) {
+            greeting = 'Good afternoon!';
+        } else {
+            greeting = 'Good evening!';
+        }
+
+        const greetingEl = document.getElementById('greeting');
+
+        if (greetingEl) {
+            greetingEl.textContent = greeting;
+        }
+    };
+
+    window.updateTimestamps = function() {
         document.querySelectorAll('.timestamp').forEach(el => {
             const utcTime = el.getAttribute('data-utc');
             if (utcTime) {
@@ -79,6 +112,11 @@
                 el.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
         });
+    }
+
+    $wire.on('scrollToBottom', () => {
+        window.updateTimestamps();
+        window.updateGreeting();
 
         const container = document.getElementById('chatbox');
         setTimeout(() => {
@@ -86,6 +124,11 @@
                 container.scrollTop = container.scrollHeight;
             }
         }, 150);
+    });
+
+    document.addEventListener('livewire:update', () => {
+        window.updateTimestamps();
+        window.updateGreeting();
     });
 </script>
 @endscript

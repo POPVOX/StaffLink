@@ -25,8 +25,9 @@
     <flux:navlist variant="outline">
         <flux:navlist.item icon="home" href="/">Home</flux:navlist.item>
         <flux:navlist.item icon="book-open" href="/resources">Resources</flux:navlist.item>
-        <flux:navlist.item icon="information-circle" href="/about">About</flux:navlist.item>
         <flux:navlist.item icon="question-mark-circle" href="/faq">FAQ</flux:navlist.item>
+        <flux:navlist.item icon="information-circle" href="/about">About</flux:navlist.item>
+        <flux:navlist.item icon="key" href="/privacy">Privacy</flux:navlist.item>
     </flux:navlist>
     <flux:spacer />
 
