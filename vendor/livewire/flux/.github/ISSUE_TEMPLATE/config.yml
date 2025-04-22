@@ -1,9 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Feature request
-    url: https://github.com/livewire/flux/discussions/new?category=feature-requests
-    about: For ideas or feature requests
-
-  - name: Flux Documentation
-    url: https://fluxui.dev/docs
-    about: View the documentation
