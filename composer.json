@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.31",
+        "laravel/slack-notification-channel": "^3.5",
         "laravel/tinker": "^2.9",
         "livewire/flux": "^1.1",
         "livewire/flux-pro": "^1.1",

@@ -2,8 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Notifications\FeedbackSubmitted;
 use App\Services\OpenAIService;
 use App\Services\RetrievalService;
+use Flux\Flux;
+use Illuminate\Notifications\Slack\SlackRoute;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 use App\Models\Conversation;
 use App\Models\Message;
@@ -15,6 +19,11 @@ class Chatbot extends Component
     public Conversation $conversation;
     public string $message = '';
     public bool $botTyping = false;
+    public string $feedbackDetails = '';
+
+    protected $rules = [
+        'feedbackDetails' => 'required|string|max:2000',
+    ];
     protected RetrievalService $retrievalService;
 
     public function mount()
@@ -66,9 +75,6 @@ class Chatbot extends Component
     #[\Livewire\Attributes\On('generateBotResponse')]
     public function generateBotResponse(string $userMessage)
     {
-        // Simulate delay for UX
-        sleep(1);
-
         $retrievedText = app(RetrievalService::class)->retrieveContextForQuery($userMessage);
 
         $messages = [
@@ -97,6 +103,29 @@ class Chatbot extends Component
 
         $this->botTyping = false;
         $this->dispatch('scrollToBottom');
+    }
+
+    public function submitFeedback()
+    {
+        $this->validate();
+
+        $sessionId = $this->conversation->session_id;
+        $details   = $this->feedbackDetails;
+
+        Flux::toast(
+            heading: 'Thank you',
+            text: 'Your feedback has been submitted.',
+            variant: 'success'
+        );
+
+        Notification::route('slack', SlackRoute::make(
+            config('services.slack.notifications.channel'),
+            config('services.slack.notifications.bot_user_oauth_token')
+        ))->notify(new FeedbackSubmitted($sessionId, $details));
+
+        $this->feedbackDetails = '';
+
+        $this->modal('feedback-modal')->close();
     }
 
     public function render()

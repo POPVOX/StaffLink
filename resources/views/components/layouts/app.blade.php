@@ -12,6 +12,12 @@
     <title>{{ $title ?? 'Staff Up Chatbot' }}</title>
     @livewireStyles
     @fluxStyles
+
+    <script>
+        if (!localStorage.getItem('flux.appearance')) {
+            localStorage.setItem('flux.appearance', 'dark');
+        }
+    </script>
 </head>
 <body class="bg-white dark:bg-zinc-800 antialiased min-h-screen theme-accent-blue">
 <flux:sidebar sticky stashable class="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700">
@@ -53,6 +59,7 @@
     <flux:spacer />
 </flux:header>
 {{ $slot }}
+<flux:toast position="top right" />
 @livewireScripts
 @fluxScripts
 </body>

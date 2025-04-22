@@ -25,17 +25,58 @@
 </svg>
 
                         </span>
-                        <div class="mr-auto flex max-w-[75%] md:max-w-[65%] flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-4 text-sky-900 dark:bg-sky-900 dark:text-sky-100">
+                        {{-- Message Bubble --}}
+                        <div class="assistant-message-body mr-auto flex max-w-[75%] md:max-w-[65%]
+                  flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-4
+                  text-sky-900 dark:bg-sky-900 dark:text-sky-100">
+
+                            {{-- Header --}}
                             <span class="font-semibold text-sky-900 dark:text-sky-50">StaffUp Bot</span>
-                            <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]
-                [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400 dark:[&_ul]:marker:text-sky-500
-                [&_li]:mb-1
-                [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300">
+
+                            {{-- Actual Text --}}
+                            <div class="assistant-text [&_*]:text-[15px] [&_*]:leading-[1.6]
+                    [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400
+                    dark:[&_ul]:marker:text-sky-500 [&_li]:mb-1
+                    [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300">
                                 {!! $message->content !!}
                             </div>
-                            <span class="timestamp ml-auto text-xs text-sky-600 dark:text-sky-400" data-utc="{{ $message->created_at->toIso8601String() }}">
-    {{ $message->created_at->format('h:i A') }}
-</span>
+
+                            {{-- Footer: timestamp + dropdown --}}
+                            <div class="flex items-center justify-between">
+          <span
+              class="timestamp ml-auto text-xs text-sky-600 dark:text-sky-400"
+              data-utc="{{ $message->created_at->toIso8601String() }}"
+          >
+            {{ $message->created_at->format('h:i A') }}
+          </span>
+
+                                <flux:dropdown x-data align="end">
+                                    {{-- trigger button --}}
+                                    <flux:button
+                                        as="button"
+                                        variant="ghost"
+                                        icon="ellipsis-vertical"
+                                        class="size-6 p-1 text-sky-600 dark:text-sky-400"
+                                    />
+                                    <flux:menu>
+                                        {{-- Report opens your existing modal --}}
+                                        <flux:menu.item x-on:click="$flux.modal('feedback-modal').show()">
+                                            Report issue
+                                        </flux:menu.item>
+                                        {{-- Copy the assistant-text --}}
+                                        <flux:menu.item
+                                            x-on:click="
+                  const body = $event.target
+                    .closest('.assistant-message-body')
+                    .querySelector('.assistant-text');
+                  navigator.clipboard.writeText(body.innerText);
+                "
+                                        >
+                                            Copy text
+                                        </flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
                         </div>
                     @else
                         <div class="ml-auto flex max-w-[80%] md:max-w-[75%] flex-col gap-2 rounded-l-lg rounded-tr-lg bg-sky-600 p-4 text-base text-white dark:bg-sky-500">
@@ -81,6 +122,41 @@
             </form>
         </div>
     </div>
+
+    <flux:modal name="feedback-modal" class="md:w-96 space-y-6">
+        <!-- Modal Title (outside the form) -->
+        <div class="space-y-1">
+            <flux:heading size="lg">Report an issue</flux:heading>
+            <flux:subheading>Let us know what happened or share suggestions.</flux:subheading>
+        </div>
+
+        <!-- Form fields -->
+        <form wire:submit.prevent="submitFeedback" class="space-y-4">
+            @error('feedbackDetails')
+            <div class="text-red-600 text-sm">{{ $message }}</div>
+            @enderror
+
+            <flux:input.group label="Details">
+                <flux:textarea
+                    wire:model.defer="feedbackDetails"
+                    rows="4"
+                    placeholder="Describe the message or behavior…"
+                    required
+                />
+            </flux:input.group>
+
+            <div class="flex gap-2">
+                <flux:spacer/>
+
+                <flux:button x-on:click="$flux.modal('feedback-modal').close()" type="button" variant="outline">
+                    Cancel
+                </flux:button>
+                <flux:button type="submit" variant="primary" icon="paper-airplane">
+                    Submit
+                </flux:button>
+            </div>
+        </form>
+    </flux:modal>
 </flux:main>
 
 @script
