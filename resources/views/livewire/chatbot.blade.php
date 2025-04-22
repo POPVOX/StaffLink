@@ -9,10 +9,28 @@
         </flux:subheading>
         <flux:separator variant="subtle" class="mb-4" />
 
+        <div class="flex items-center space-x-4 mb-6 p-4
+            bg-yellow-50 text-yellow-800 rounded-lg border-l-4 border-yellow-400
+            dark:bg-yellow-800/20 dark:text-yellow-200 dark:border-yellow-500">
+            {{-- Heroicon: exclamation triangle --}}
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="w-5 h-5 flex-shrink-0"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M11.25 9v2.25m0 4.5h.008v.008H11.25z
+             M20.25 13.5l-8.53-11a1.2 1.2 0 00-1.98 0l-8.53
+             11A1.2 1.2 0 001.2 15h21.6a1.2 1.2 0 001.08-1.5z"/>
+            </svg>
+            <p class="text-sm leading-tight">
+                This is an experimental chatbot trained on publicly available resources.
+                Information received here is <strong>not official guidance</strong>.
+            </p>
+        </div>
+
         <!-- Chat Messages -->
         <div id="chatbox" class="flex-1 overflow-y-auto px-6 py-6 space-y-4 w-full max-w-4xl h-[550px] scroll-smooth"
              x-data
-             x-init="$nextTick(() => $dispatch('scroll-to-bottom'))">
+             x-init="$nextTick(() => $dispatch('scrollToBottom'))">
 
             @foreach($messages as $message)
                 <div x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show"
@@ -203,6 +221,11 @@
     });
 
     document.addEventListener('livewire:update', () => {
+        window.updateTimestamps();
+        window.updateGreeting();
+    });
+
+    document.addEventListener('livewire:load', () => {
         window.updateTimestamps();
         window.updateGreeting();
     });
