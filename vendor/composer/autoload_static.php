@@ -676,6 +676,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'App\\Models\\Conversation' => __DIR__ . '/../..' . '/app/Models/Conversation.php',
         'App\\Models\\Message' => __DIR__ . '/../..' . '/app/Models/Message.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Notifications\\FeedbackSubmitted' => __DIR__ . '/../..' . '/app/Notifications/FeedbackSubmitted.php',
         'App\\Output\\Concerns\\InteractsWithSymbols' => __DIR__ . '/..' . '/laravel/pint/app/Output/Concerns/InteractsWithSymbols.php',
         'App\\Output\\ProgressOutput' => __DIR__ . '/..' . '/laravel/pint/app/Output/ProgressOutput.php',
         'App\\Output\\SummaryOutput' => __DIR__ . '/..' . '/laravel/pint/app/Output/SummaryOutput.php',

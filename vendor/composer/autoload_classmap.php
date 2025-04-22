@@ -24,6 +24,7 @@ return array(
     'App\\Models\\Conversation' => $baseDir . '/app/Models/Conversation.php',
     'App\\Models\\Message' => $baseDir . '/app/Models/Message.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Notifications\\FeedbackSubmitted' => $baseDir . '/app/Notifications/FeedbackSubmitted.php',
     'App\\Output\\Concerns\\InteractsWithSymbols' => $vendorDir . '/laravel/pint/app/Output/Concerns/InteractsWithSymbols.php',
     'App\\Output\\ProgressOutput' => $vendorDir . '/laravel/pint/app/Output/ProgressOutput.php',
     'App\\Output\\SummaryOutput' => $vendorDir . '/laravel/pint/app/Output/SummaryOutput.php',
