@@ -51,21 +51,16 @@ class Chatbot extends Component
     {
         if (empty($this->message)) return;
 
-        // Save user message
         Message::create([
             'conversation_id' => $this->conversation->id,
             'content' => $this->message,
             'role' => 'user',
         ]);
 
-        // Refresh messages
         $this->conversation->refresh();
-
-        // Show typing indicator
         $this->botTyping = true;
         $this->dispatch('scrollToBottom');
 
-        // Capture user input before clearing
         $userMessage = $this->message;
         $this->message = '';
 

@@ -1,6 +1,5 @@
-<flux:main class="flex flex-col items-center justify-center min-h-screen bg-sky-50 dark:bg-sky-900">
-    <div class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6">
-        <!-- Chat Header -->
+<flux:main class="flex flex-col items-center justify-center h-screen bg-sky-50 dark:bg-sky-900 px-2">
+    <div class="flex flex-col w-full max-w-md sm:max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-lg p-2 sm:p-6 h-full">
         <flux:heading size="xl" level="1" class="text-center text-sky-700 dark:text-sky-300 mt-4">
             <span id="greeting">Hello!</span>
         </flux:heading>
@@ -9,26 +8,41 @@
         </flux:subheading>
         <flux:separator variant="subtle" class="mb-4" />
 
-        <div class="flex items-center space-x-4 mb-6 p-4
-            bg-yellow-50 text-yellow-800 rounded-lg border-l-4 border-yellow-400
-            dark:bg-yellow-800/20 dark:text-yellow-200 dark:border-yellow-500">
-            {{-- Heroicon: exclamation triangle --}}
+        <div
+            x-data="{ show: true }"
+            x-show="show"
+            x-cloak
+            class="relative flex items-center space-x-2 mb-4 p-4
+         bg-yellow-50 text-yellow-800 rounded-lg border-l-4 border-yellow-400
+         dark:bg-yellow-800/20 dark:text-yellow-200 dark:border-yellow-500"
+        >
             <svg xmlns="http://www.w3.org/2000/svg"
                  class="w-5 h-5 flex-shrink-0"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="2"
+            >
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M11.25 9v2.25m0 4.5h.008v.008H11.25z
-             M20.25 13.5l-8.53-11a1.2 1.2 0 00-1.98 0l-8.53
-             11A1.2 1.2 0 001.2 15h21.6a1.2 1.2 0 001.08-1.5z"/>
+                      d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
             </svg>
+
             <p class="text-sm leading-tight">
                 This is an experimental chatbot trained on publicly available resources.
                 Information received here is <strong>not official guidance</strong>.
             </p>
+
+            <button
+                @click="show = false"
+                class="absolute top-2 right-3 text-xl leading-none text-yellow-800 dark:text-yellow-200 hover:opacity-75"
+                aria-label="Dismiss"
+            >
+                &times;
+            </button>
         </div>
 
         <!-- Chat Messages -->
-        <div id="chatbox" class="flex-1 overflow-y-auto px-6 py-6 space-y-4 w-full max-w-4xl h-[550px] scroll-smooth"
+        <div id="chatbox" class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 w-full scroll-smooth"
              x-data
              x-init="$nextTick(() => $dispatch('scrollToBottom'))">
 
@@ -43,15 +57,10 @@
 </svg>
 
                         </span>
-                        {{-- Message Bubble --}}
-                        <div class="assistant-message-body mr-auto flex max-w-[75%] md:max-w-[65%]
-                  flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-4
-                  text-sky-900 dark:bg-sky-900 dark:text-sky-100">
+                        <div class="assistant-message-body mr-auto w-full sm:max-w-[75%] md:max-w-[65%] flex flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-3 sm:p-4 text-sky-900 dark:bg-sky-900 dark:text-sky-100">
 
-                            {{-- Header --}}
                             <span class="font-semibold text-sky-900 dark:text-sky-50">StaffUp Bot</span>
 
-                            {{-- Actual Text --}}
                             <div class="assistant-text [&_*]:text-[15px] [&_*]:leading-[1.6]
                     [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400
                     dark:[&_ul]:marker:text-sky-500 [&_li]:mb-1
@@ -59,7 +68,6 @@
                                 {!! $message->content !!}
                             </div>
 
-                            {{-- Footer: timestamp + dropdown --}}
                             <div class="flex items-center justify-between">
           <span
               class="timestamp ml-auto text-xs text-sky-600 dark:text-sky-400"
@@ -68,8 +76,7 @@
             {{ $message->created_at->format('h:i A') }}
           </span>
 
-                                <flux:dropdown x-data align="end">
-                                    {{-- trigger button --}}
+                                <flux:dropdown x-data align="end" position="top" class="ml-2">
                                     <flux:button
                                         as="button"
                                         variant="ghost"
@@ -77,11 +84,9 @@
                                         class="size-6 p-1 text-sky-600 dark:text-sky-400"
                                     />
                                     <flux:menu>
-                                        {{-- Report opens your existing modal --}}
                                         <flux:menu.item x-on:click="$flux.modal('feedback-modal').show()">
                                             Report issue
                                         </flux:menu.item>
-                                        {{-- Copy the assistant-text --}}
                                         <flux:menu.item
                                             x-on:click="
                   const body = $event.target
@@ -97,8 +102,8 @@
                             </div>
                         </div>
                     @else
-                        <div class="ml-auto flex max-w-[80%] md:max-w-[75%] flex-col gap-2 rounded-l-lg rounded-tr-lg bg-sky-600 p-4 text-base text-white dark:bg-sky-500">
-                            <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]">
+                        <div class="ml-auto w-full sm:max-w-[80%] md:max-w-[75%] flex flex-col gap-2 rounded-l-lg rounded-tr-lg bg-sky-600 p-3 sm:p-4 text-base text-white dark:bg-sky-500">
+                        <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]">
                                 <p>{{ $message->content }}</p>
                             </div>
                             <span class="timestamp ml-auto text-xs text-sky-200" data-utc="{{ $message->created_at->toIso8601String() }}">
@@ -142,13 +147,11 @@
     </div>
 
     <flux:modal name="feedback-modal" class="md:w-96 space-y-6">
-        <!-- Modal Title (outside the form) -->
         <div class="space-y-1">
             <flux:heading size="lg">Report an issue</flux:heading>
             <flux:subheading>Let us know what happened or share suggestions.</flux:subheading>
         </div>
 
-        <!-- Form fields -->
         <form wire:submit.prevent="submitFeedback" class="space-y-4">
             @error('feedbackDetails')
             <div class="text-red-600 text-sm">{{ $message }}</div>
