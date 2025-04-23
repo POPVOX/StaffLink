@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\QuestionEmbedding;
 use App\Notifications\FeedbackSubmitted;
 use App\Services\OpenAIService;
 use App\Services\RetrievalService;
@@ -9,8 +12,6 @@ use Flux\Flux;
 use Illuminate\Notifications\Slack\SlackRoute;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
-use App\Models\Conversation;
-use App\Models\Message;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
 
@@ -21,26 +22,26 @@ class Chatbot extends Component
     public bool $botTyping = false;
     public string $feedbackDetails = '';
 
-    protected $rules = [
+    protected array $rules = [
         'feedbackDetails' => 'required|string|max:2000',
     ];
-    protected RetrievalService $retrievalService;
 
-    public function mount()
+    public function mount(RetrievalService $retrievalService, OpenAIService $openAI)
     {
-        // Check for existing session ID or create a new conversation
         $sessionId = Session::get('chat_session_id');
 
         if ($sessionId) {
             $this->conversation = Conversation::where('session_id', $sessionId)->firstOrFail();
         } else {
-            $this->conversation = Conversation::create(['session_id' => Str::random(12)]);
+            $this->conversation = Conversation::create([
+                'session_id' => Str::random(12),
+            ]);
             Session::put('chat_session_id', $this->conversation->session_id);
 
-            Message::create([
+            $welcome = Message::create([
                 'conversation_id' => $this->conversation->id,
-                'role' => 'assistant',
-                'content' => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
+                'role'            => 'assistant',
+                'content'         => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
             ]);
         }
 
@@ -49,13 +50,17 @@ class Chatbot extends Component
 
     public function sendMessage()
     {
-        if (empty($this->message)) return;
+        if (trim($this->message) === '') {
+            return;
+        }
 
-        Message::create([
+        $userMsg = Message::create([
             'conversation_id' => $this->conversation->id,
-            'content' => $this->message,
-            'role' => 'user',
+            'content'         => $this->message,
+            'role'            => 'user',
         ]);
+
+        $this->saveEmbedding($userMsg);
 
         $this->conversation->refresh();
         $this->botTyping = true;
@@ -63,42 +68,61 @@ class Chatbot extends Component
 
         $userMessage = $this->message;
         $this->message = '';
-
         $this->dispatch('generateBotResponse', $userMessage)->self();
     }
 
     #[\Livewire\Attributes\On('generateBotResponse')]
     public function generateBotResponse(string $userMessage)
     {
-        $retrievedText = app(RetrievalService::class)->retrieveContextForQuery($userMessage);
+        $retrievedText = app(RetrievalService::class)
+            ->retrieveContextForQuery($userMessage);
 
         $messages = [
             ['role' => 'system', 'content' => $this->systemPrompt()],
-            ['role' => 'user', 'content' => $userMessage],
+            ['role' => 'user',   'content' => $userMessage],
         ];
 
-        if (!empty($retrievedText)) {
-            $messages[] = ['role' => 'system', 'content' => "Reference Material:\n" . $retrievedText];
+        if (! empty($retrievedText)) {
+            $messages[] = ['role' => 'system','content' => "Reference Material:\n$retrievedText"];
         }
 
         try {
-            $openAIService = app(OpenAIService::class);
-            $botResponse = $openAIService->getChatResponse($messages);
+            $botResponse = app(OpenAIService::class)
+                ->getChatResponse($messages);
         } catch (\Exception $e) {
             $botResponse = "I'm having trouble responding right now.";
         }
 
-        Message::create([
+        $botMsg = Message::create([
             'conversation_id' => $this->conversation->id,
-            'content' => $botResponse,
-            'role' => 'assistant',
+            'content'         => $botResponse,
+            'role'            => 'assistant',
         ]);
 
-        $this->conversation->refresh();
+        $this->saveEmbedding($botMsg);
 
+        $this->conversation->refresh();
         $this->botTyping = false;
         $this->dispatch('scrollToBottom');
     }
+
+    /**
+     * Generate & store an embedding for the given message.
+     */
+    protected function saveEmbedding(Message $msg): void
+    {
+        // get only the float[] from OpenAI
+        $vector = app(OpenAIService::class)
+            ->getEmbeddingVector($msg->content);
+
+        if (! empty($vector)) {
+            QuestionEmbedding::updateOrCreate(
+                ['message_id' => $msg->id],
+                ['embedding'  => $vector]
+            );
+        }
+    }
+
 
     public function submitFeedback()
     {
@@ -109,7 +133,7 @@ class Chatbot extends Component
 
         Flux::toast(
             heading: 'Thank you',
-            text: 'Your feedback has been submitted.',
+            text:    'Your feedback has been submitted.',
             variant: 'success'
         );
 
@@ -119,7 +143,6 @@ class Chatbot extends Component
         ))->notify(new FeedbackSubmitted($sessionId, $details));
 
         $this->feedbackDetails = '';
-
         $this->modal('feedback-modal')->close();
     }
 
@@ -151,9 +174,10 @@ PROMPT;
 
     private function getConversationHistory(): array
     {
-        return $this->conversation->messages()->oldest()->get()->map(fn($msg) => [
-            'role' => $msg->role === 'assistant' ? 'assistant' : 'user',
-            'content' => $msg->content,
-        ])->toArray();
+        return $this->conversation->messages()->oldest()->get()
+            ->map(fn($m) => [
+                'role'    => $m->role === 'assistant' ? 'assistant' : 'user',
+                'content' => $m->content,
+            ])->toArray();
     }
 }

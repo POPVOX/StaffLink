@@ -15,10 +15,24 @@ class OpenAIService
 
     public function generateEmbedding(string $text): array
     {
-        return $this->client->embeddings()->create([
-            'model' => 'text-embedding-ada-002',
-            'input' => $text,
-        ])->embeddings;
+        return $this->client
+            ->embeddings()
+            ->create([
+                'model' => 'text-embedding-ada-002',
+                'input' => $text,
+            ])->embeddings;
+    }
+
+    public function getEmbeddingVector(string $text): array
+    {
+        $resp = $this->client
+            ->embeddings()
+            ->create([
+                'model' => 'text-embedding-ada-002',
+                'input' => $text,
+            ]);
+
+        return $resp->embeddings[0]->embedding ?? [];
     }
 
     public function getChatResponse(array $messages): string

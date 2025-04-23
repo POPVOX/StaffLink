@@ -4,7 +4,7 @@
             <span id="greeting">Hello!</span>
         </flux:heading>
         <flux:subheading size="lg" class="text-center text-gray-600 dark:text-gray-400 mb-4">
-            Welcome to the StaffUp chatbot
+            Welcome to the StaffLink chatbot
         </flux:subheading>
         <flux:separator variant="subtle" class="mb-4" />
 
@@ -59,9 +59,9 @@
                         </span>
                         <div class="assistant-message-body mr-auto w-full sm:max-w-[75%] md:max-w-[65%] flex flex-col gap-2 rounded-r-md rounded-tl-md bg-sky-100 p-3 sm:p-4 text-sky-900 dark:bg-sky-900 dark:text-sky-100">
 
-                            <span class="font-semibold text-sky-900 dark:text-sky-50">StaffUp Bot</span>
+                            <span class="font-semibold text-sky-900 dark:text-sky-50">StaffLink Bot</span>
 
-                            <div class="assistant-text [&_*]:text-[15px] [&_*]:leading-[1.6]
+                            <div class="assistant-text [&_*]:text-[15px] [&_*]:leading-[1.6] [&_p]:mb-2
                     [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400
                     dark:[&_ul]:marker:text-sky-500 [&_li]:mb-1
                     [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300">
@@ -103,7 +103,7 @@
                         </div>
                     @else
                         <div class="ml-auto w-full sm:max-w-[80%] md:max-w-[75%] flex flex-col gap-2 rounded-l-lg rounded-tr-lg bg-sky-600 p-3 sm:p-4 text-base text-white dark:bg-sky-500">
-                        <div class="[&_*]:text-[15px] [&_*]:leading-[1.6]">
+                        <div class="[&_*]:text-[15px] [&_*]:leading-[1.6] [&_p]:mb-2">
                                 <p>{{ $message->content }}</p>
                             </div>
                             <span class="timestamp ml-auto text-xs text-sky-200" data-utc="{{ $message->created_at->toIso8601String() }}">
