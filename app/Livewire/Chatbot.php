@@ -26,7 +26,7 @@ class Chatbot extends Component
         'feedbackDetails' => 'required|string|max:2000',
     ];
 
-    public function mount(RetrievalService $retrievalService, OpenAIService $openAI)
+    public function mount()
     {
         $sessionId = Session::get('chat_session_id');
 

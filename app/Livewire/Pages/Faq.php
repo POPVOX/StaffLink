@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Pages;
 
 use App\Models\FaqCluster;
 use Livewire\Component;
@@ -16,6 +16,6 @@ class Faq extends Component
 
     public function render()
     {
-        return view('livewire.faq');
+        return view('livewire.pages.faq');
     }
 }
