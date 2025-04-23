@@ -26,6 +26,16 @@
                     <li><flux:link href="https://drive.google.com/file/d/1cvGbHFAnWU-YsCgfLrt-2TpvvR2AOZNI/view?usp=sharing">Salary & Benefits Negotiation Training</flux:link></li>
                     <li><flux:link href="https://docs.google.com/document/d/1PP-8rFkDegp6fpLt-KydRHAsZ8cGdZkiK5mHBeEALlE/edit?usp=sharing">Affordable Housing in the DMV</flux:link></li>
                     <li><flux:link href="https://docs.google.com/document/d/13NOo0aVi9dfVbADUUfkZnT1uiwq9GuC0X-rmXPJbG80/edit?usp=sharing">Affordable Workwear in the DMV</flux:link></li>
+                    <li>
+                        <flux:link href="{{ asset('pdfs/2025_house_calendar.pdf') }}" target="_blank">
+                            2025 House Calendar (PDF)
+                        </flux:link>
+                    </li>
+                    <li>
+                        <flux:link href="{{ asset('pdfs/2025_calendar.pdf') }}" target="_blank">
+                            2025 Senate Calendar (PDF)
+                        </flux:link>
+                    </li>
                 </ul>
             </div>
         </div>
