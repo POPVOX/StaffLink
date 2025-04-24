@@ -2,6 +2,8 @@
 
 A modern AI-powered chatbot for congressional staffers, built with Laravel, Livewire, OpenAI, and Pinecone.
 
+![CI](https://github.com/<your-org>/<your-repo>/actions/workflows/ci.yml/badge.svg)
+
 ---
 
 #### 📌 Features
