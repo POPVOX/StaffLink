@@ -7,11 +7,6 @@ use App\Services\FaqService;
 use App\Services\OpenAIService;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
-    // Ensure SQLite foreign‐keys logic works in–memory
-    DB::statement('PRAGMA foreign_keys = ON;');
-});
-
 it('clusters similar questions and persists clusters using LLM output', function () {
     // seed messages
     $msg1 = Message::create([
