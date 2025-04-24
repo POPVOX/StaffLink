@@ -71,10 +71,31 @@ class FaqService
         }
 
         // 3) truncate old clusters
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('faq_cluster_message')->truncate();
-        FaqCluster::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        switch (DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = OFF;');
+                break;
+        }
+
+        if (DB::getDriverName() === 'sqlite') {
+            DB::table('faq_cluster_message')->delete();
+            FaqCluster::query()->delete();
+        } else {
+            DB::table('faq_cluster_message')->truncate();
+            FaqCluster::truncate();
+        }
+
+        switch (DB::getDriverName()) {
+            case 'mysql':
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                break;
+            case 'sqlite':
+                DB::statement('PRAGMA foreign_keys = ON;');
+                break;
+        }
 
         // 4) craft & persist each cluster
         foreach ($clusters as $cluster) {
