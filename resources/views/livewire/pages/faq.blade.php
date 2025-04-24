@@ -15,7 +15,13 @@
                     @foreach($faqs as $faq)
                         <div>
                             <dt class="text-base/7 font-semibold text-gray-900 dark:text-white">
-                                {{ $faq->representative_text }}
+                                <a
+                                    wire:navigate
+                                    href="/?message={{ urlencode($faq->representative_text) }}"
+                                    class="hover:underline"
+                                >
+                                    {{ $faq->representative_text }}
+                                </a>
                             </dt>
                             <dd class="mt-2 flex items-center space-x-2 text-base/7 text-gray-600 dark:text-gray-400">
                                 {{-- Example “answer”: show how many times it was asked --}}

@@ -71,7 +71,7 @@
                             <div class="flex items-center justify-between">
           <span
               class="timestamp ml-auto text-xs text-sky-600 dark:text-sky-400"
-              data-utc="{{ $message->created_at->toIso8601String() }}"
+              data-utc="{{ $message->created_at->toIso8601ZuluString() }}"
           >
             {{ $message->created_at->format('h:i A') }}
           </span>
@@ -106,7 +106,7 @@
                         <div class="[&_*]:text-[15px] [&_*]:leading-[1.6] [&_p]:mb-2">
                                 <p>{{ $message->content }}</p>
                             </div>
-                            <span class="timestamp ml-auto text-xs text-sky-200" data-utc="{{ $message->created_at->toIso8601String() }}">
+                            <span class="timestamp ml-auto text-xs text-sky-200" data-utc="{{ $message->created_at->toIso8601ZuluString() }}">
     {{ $message->created_at->format('h:i A') }}
 </span>
                         </div>
@@ -138,8 +138,12 @@
         <div class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700 p-6">
             <form wire:submit.prevent="sendMessage" class="flex items-center gap-4">
                 <flux:input.group>
-                    <flux:input wire:model.defer="message" placeholder="Type your message..." />
-
+                    <flux:input
+                        x-ref="chatInput"
+                        x-init="() => { if (@entangle('message')) $refs.chatInput.focus() }"
+                        wire:model.defer="message"
+                        placeholder="Type your message..."
+                    />
                     <flux:button type="submit" icon="plus" variant="primary">Send</flux:button>
                 </flux:input.group>
             </form>
@@ -204,12 +208,20 @@
     window.updateTimestamps = function() {
         document.querySelectorAll('.timestamp').forEach(el => {
             const utcTime = el.getAttribute('data-utc');
-            if (utcTime) {
-                const date = new Date(utcTime);
-                el.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
+            if (!utcTime) return;
+
+            const normalized = utcTime.replace(/\+00:00$/, 'Z');
+
+            const date = new Date(normalized);
+            if (isNaN(date)) return; // sanity
+
+            el.textContent = date.toLocaleTimeString([], {
+                hour:   '2-digit',
+                minute: '2-digit'
+            });
         });
-    }
+    };
+
 
     $wire.on('scrollToBottom', () => {
         window.updateTimestamps();

@@ -21,6 +21,9 @@ class Chatbot extends Component
     public string $message = '';
     public bool $botTyping = false;
     public string $feedbackDetails = '';
+    public $queryString = [
+        'message' => ['except' => ''],
+    ];
 
     protected array $rules = [
         'feedbackDetails' => 'required|string|max:2000',
@@ -43,6 +46,11 @@ class Chatbot extends Component
                 'role'            => 'assistant',
                 'content'         => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
             ]);
+        }
+
+        if ($initial = request()->query('message')) {
+            $this->message = $initial;
+            $this->sendMessage();
         }
 
         $this->dispatch('scrollToBottom');

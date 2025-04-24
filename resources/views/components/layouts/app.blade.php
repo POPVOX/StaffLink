@@ -20,6 +20,15 @@
     </script>
 </head>
 <body class="bg-white dark:bg-zinc-800 antialiased min-h-screen theme-accent-blue">
+<script>
+    (function(){
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('message')) {
+            url.searchParams.delete('message');
+            window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+        }
+    })();
+</script>
 <flux:sidebar sticky stashable class="bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-700">
     <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
@@ -29,11 +38,50 @@
     </a>
 
     <flux:navlist variant="outline">
-        <flux:navlist.item icon="home" href="/">Home</flux:navlist.item>
-        <flux:navlist.item icon="book-open" href="/resources">Resources</flux:navlist.item>
-        <flux:navlist.item icon="question-mark-circle" href="/faq">FAQ</flux:navlist.item>
-        <flux:navlist.item icon="information-circle" href="/about">About</flux:navlist.item>
-        <flux:navlist.item icon="key" href="/privacy">Privacy</flux:navlist.item>
+        <flux:navlist.item
+            as="a"
+            icon="home"
+            wire:navigate
+            href="/"
+        >
+            Home
+        </flux:navlist.item>
+
+        <flux:navlist.item
+            as="a"
+            icon="book-open"
+            wire:navigate
+            href="/resources"
+        >
+            Resources
+        </flux:navlist.item>
+
+        <flux:navlist.item
+            as="a"
+            icon="question-mark-circle"
+            wire:navigate
+            href="/faq"
+        >
+            FAQ
+        </flux:navlist.item>
+
+        <flux:navlist.item
+            as="a"
+            icon="information-circle"
+            wire:navigate
+            href="/about"
+        >
+            About
+        </flux:navlist.item>
+
+        <flux:navlist.item
+            as="a"
+            icon="key"
+            wire:navigate
+            href="/privacy"
+        >
+            Privacy
+        </flux:navlist.item>
     </flux:navlist>
     <flux:spacer />
 
