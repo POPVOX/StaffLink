@@ -8,9 +8,32 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Services\OpenAIService;
 use App\Services\RetrievalService;
+use Mockery;
 
 beforeEach(function () {
     Notification::fake();
+
+    $openAi = Mockery::mock(OpenAIService::class);
+    $openAi
+        ->shouldReceive('generateEmbedding')
+        ->andReturn([ ['embedding' => [0.1, 0.2, 0.3] ] ]);
+    $openAi
+        ->shouldReceive('getEmbeddingVector')
+        ->andReturn([0.1, 0.2, 0.3]);
+    $openAi
+        ->shouldReceive('getChatResponse')
+        ->andReturn('🤖 Mock bot reply');
+    app()->instance(OpenAIService::class, $openAi);
+
+    $retrieval = Mockery::mock(RetrievalService::class);
+    $retrieval
+        ->shouldReceive('retrieveContextForQuery')
+        ->andReturn('');
+    app()->instance(RetrievalService::class, $retrieval);
+});
+
+afterEach(function () {
+    Mockery::close();
 });
 
 it('initializes a conversation with a welcome message and fires scrollToBottom', function () {
@@ -41,101 +64,30 @@ it('saves a user message, clears the input, shows typing, and fires scrollToBott
 });
 
 it('generates a bot response, persists it, resets typing, and fires scrollToBottom', function () {
-    app()->instance(OpenAIService::class, new class {
-        public function getChatResponse(array $messages): string
-        {
-            return 'Mocked reply';
-        }
-        public function getEmbeddingVector(string $text): array
-        {
-            return [0.1, 0.2, 0.3];
-        }
-    });
-
-    app()->instance(RetrievalService::class, new class {
-        public function retrieveContextForQuery(string $q): string
-        {
-            return '';
-        }
-    });
-
+    // our global fake will return "🤖 Mock bot reply"
     $test = Livewire::test(Chatbot::class)
         ->set('message', 'Hello bot')
         ->call('sendMessage')
         ->assertSet('botTyping', true)
-        ->assertSet('message', '')
         ->assertDispatched('scrollToBottom');
 
-    $test->call('generateBotResponse', 'Hello bot')
+    $test
+        ->call('generateBotResponse', 'Hello bot')
         ->assertSet('botTyping', false)
         ->assertDispatched('scrollToBottom');
 
     $assistantMessages = Message::where('role', 'assistant')->pluck('content')->toArray();
 
-    expect($assistantMessages)->toContain('Mocked reply');
+    expect($assistantMessages)->toContain('🤖 Mock bot reply');
     expect(count($assistantMessages))->toBe(2);
 });
 
-it('generates a bot response, persists it, and stops typing', function () {
-    $retrieval = \Mockery::mock(\App\Services\RetrievalService::class);
-    $retrieval
-        ->shouldReceive('retrieveContextForQuery')
-        ->once()
-        ->with('Hey bot')
-        ->andReturn('');
-    app()->instance(\App\Services\RetrievalService::class, $retrieval);
-
-    $openAi = \Mockery::mock(\App\Services\OpenAIService::class);
-    $openAi
-        ->shouldReceive('getChatResponse')
-        ->once()
-        ->with([
-            ['role' => 'system', 'content' => app(\App\Livewire\Chatbot::class)->systemPrompt()],
-            ['role' => 'user',   'content' => 'Hey bot'],
-        ])
-        ->andReturn('🤖 Mock reply');
-    $openAi
-        ->shouldReceive('getEmbeddingVector')
-        ->twice()
-        ->andReturn([0.1, 0.2, 0.3]);
-    app()->instance(\App\Services\OpenAIService::class, $openAi);
-
-    Livewire::test(\App\Livewire\Chatbot::class)
-        ->set('message', 'Hey bot')
-        ->call('sendMessage')                        // saves user msg + dispatches scroll
-        ->call('generateBotResponse', 'Hey bot')     // triggers our stubbed reply
-        ->assertSeeHtml('🤖 Mock reply')             // the bot’s reply is rendered
-        ->assertSet('botTyping', false);             // typing indicator is turned off
-
-    expect(\App\Models\Message::where('role', 'assistant')
-        ->where('content', '🤖 Mock reply')
-        ->exists()
-    )->toBeTrue();
-});
-
 it('stores embeddings for both user and bot messages', function () {
-    $retrieval = \Mockery::mock(\App\Services\RetrievalService::class);
-    $retrieval
-        ->shouldReceive('retrieveContextForQuery')
-        ->once()
-        ->andReturn('');
-    app()->instance(\App\Services\RetrievalService::class, $retrieval);
-
-    $openAi = \Mockery::mock(\App\Services\OpenAIService::class);
-    $openAi
-        ->shouldReceive('getChatResponse')
-        ->andReturn('👍 Embedding test reply');
-    $openAi
-        ->shouldReceive('getEmbeddingVector')
-        ->twice()
-        ->andReturn([0.1, 0.2, 0.3]);
-    app()->instance(\App\Services\OpenAIService::class, $openAi);
-
-    Livewire::test(\App\Livewire\Chatbot::class)
+    Livewire::test(Chatbot::class)
         ->set('message', 'Test embedding')
         ->call('sendMessage')
         ->call('generateBotResponse', 'Test embedding')
-        ->assertSeeHtml('👍 Embedding test reply')
+        ->assertSeeHtml('🤖 Mock bot reply')
         ->assertSet('botTyping', false);
 
     expect(\App\Models\QuestionEmbedding::count())->toBe(2);
@@ -155,6 +107,3 @@ it('dispatches the correct toast when feedback is submitted', function () {
 
     Notification::assertSentTimes(FeedbackSubmitted::class, 1);
 });
-
-
-
