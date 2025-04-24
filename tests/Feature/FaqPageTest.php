@@ -4,11 +4,6 @@ use App\Livewire\Pages\Faq;
 use App\Models\FaqCluster;
 use Livewire\Livewire;
 
-beforeEach(function () {
-    // start with a clean slate each time
-    FaqCluster::truncate();
-});
-
 it('renders the FAQ header and intro copy', function () {
     Livewire::test(Faq::class)
         ->assertSee('Frequently asked questions')

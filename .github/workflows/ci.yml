@@ -54,6 +54,9 @@ jobs:
           cp .env.example .env
           php -r "file_put_contents('.env', str_replace('DB_CONNECTION=sqlite', 'DB_CONNECTION=mysql', file_get_contents('.env')));"
 
+      - name: Generate APP_KEY
+        run: php artisan key:generate --force
+
       - name: Wait for MySQL
         run: |
           mkdir -p tests/Unit tests/Feature
