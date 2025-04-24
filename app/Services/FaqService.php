@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Models\FaqCluster;
-use App\Models\Message;
 use App\Models\QuestionEmbedding;
 use App\Services\OpenAIService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class FaqService
 {
@@ -70,32 +70,11 @@ class FaqService
             }
         }
 
-        // 3) truncate old clusters
-        switch (DB::getDriverName()) {
-            case 'mysql':
-                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-                break;
-            case 'sqlite':
-                DB::statement('PRAGMA foreign_keys = OFF;');
-                break;
-        }
-
-        if (DB::getDriverName() === 'sqlite') {
-            DB::table('faq_cluster_message')->delete();
-            FaqCluster::query()->delete();
-        } else {
-            DB::table('faq_cluster_message')->truncate();
-            FaqCluster::truncate();
-        }
-
-        switch (DB::getDriverName()) {
-            case 'mysql':
-                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-                break;
-            case 'sqlite':
-                DB::statement('PRAGMA foreign_keys = ON;');
-                break;
-        }
+        // 3) truncate old clusters & pivots in a driver-agnostic way
+        Schema::disableForeignKeyConstraints();
+        DB::table('faq_cluster_message')->truncate();
+        FaqCluster::truncate();
+        Schema::enableForeignKeyConstraints();
 
         // 4) craft & persist each cluster
         foreach ($clusters as $cluster) {
