@@ -6,7 +6,13 @@
                     Frequently asked questions
                 </h2>
                 <p class="mt-4 text-pretty text-base/7 text-gray-600 dark:text-gray-400">
-                    Here are a list of some questions that other users have asked. Feel free to use them as a jumping off point for your own learning or ask your own!
+                    These are aggregations of the questions that are being asked of the StaffLink chatbot.
+                </p>
+                <p class="mt-4 text-pretty text-base/7 text-gray-600 dark:text-gray-400">
+                    Our system groups questions by topic, generates a generic version of the question, and shares the number of times a related question was asked.
+                </p>
+                <p class="mt-4 text-pretty text-base/7 text-gray-600 dark:text-gray-400">
+                    Use these as a way to see what colleagues are asking or as a jumping off point for your own!
                 </p>
             </div>
 

@@ -8,7 +8,6 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Services\OpenAIService;
 use App\Services\RetrievalService;
-use Mockery;
 
 beforeEach(function () {
     Notification::fake();

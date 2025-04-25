@@ -9,7 +9,7 @@
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     @vite('resources/css/app.css')
-    <title>{{ $title ?? 'Staff Up Chatbot' }}</title>
+    <title>{{ $title ?? 'StaffLink Chatbot' }}</title>
     @livewireStyles
     @fluxStyles
 

@@ -7,7 +7,7 @@ use Livewire\Livewire;
 it('renders the FAQ header and intro copy', function () {
     Livewire::test(Faq::class)
         ->assertSee('Frequently asked questions')
-        ->assertSee('Here are a list of some questions that other users have asked');
+        ->assertSee('These are aggregations');
 });
 
 it('shows no items when there are no clusters', function () {

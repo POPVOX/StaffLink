@@ -21,7 +21,7 @@ test('it renders the FAQ page', function () {
 
 test('it renders the about page', function () {
     $response = $this->get('/about');
-    expect($response->getContent())->toContain('user-friendly resource hub');
+    expect($response->getContent())->toContain('open-source project');
     $response->assertStatus(200);
 });
 

@@ -4,10 +4,10 @@
             <div class="lg:col-span-5">
                 <h2 class="text-pretty text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Resources</h2>
                 <p class="mt-4 text-pretty text-base/7 text-gray-600 dark:text-gray-400">
-                    The LegiDash StaffUp Portal is designed to be a simple, user-friendly resource hub for junior Congressional staffers. StaffUp provides immediate guidance, curated key resources, and a dynamic FAQ page that highlights the most recent and frequently asked questions.
+                    The StaffLink chatbot references documents prepared by the Modernization Staff Association (MSA) and other publicly available resources to ensure that responses are aligned with best practices for Congressional staffers.
                 </p>
                 <p class="mt-4 text-pretty text-base/7 text-gray-600 dark:text-gray-400">
-                    This chatbot is specifically trained using documents prepared by the Modernization Staff Association (MSA) to ensure that responses are aligned with best practices for Congressional staffers. Additionally, the bot utilizes the OpenAI API, but responses are tightly constrained to the knowledge contained within MSA documents. As new resources are developed and integrated, they will be listed on this page to ensure transparency about the materials being referenced.
+                    As new resources are developed and integrated, they will be listed on this page to ensure transparency about the materials being referenced.
                 </p>
             </div>
             <div class="mt-10 lg:col-span-7 lg:mt-0">
