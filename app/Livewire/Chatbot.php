@@ -85,13 +85,21 @@ class Chatbot extends Component
         $retrievedText = app(RetrievalService::class)
             ->retrieveContextForQuery($userMessage);
 
-        $messages = [
-            ['role' => 'system', 'content' => $this->systemPrompt()],
-            ['role' => 'user',   'content' => $userMessage],
-        ];
+        $messages = array_merge(
+            [
+                ['role' => 'system', 'content' => $this->systemPrompt()],
+            ],
+            $this->getConversationHistory(),          // <-- your helper
+            [
+                ['role' => 'user', 'content' => $userMessage],
+            ]
+        );
 
         if (! empty($retrievedText)) {
-            $messages[] = ['role' => 'system','content' => "Reference Material:\n$retrievedText"];
+            $messages[] = [
+                'role'    => 'system',
+                'content' => "Reference Material:\n{$retrievedText}",
+            ];
         }
 
         try {

@@ -33,6 +33,7 @@ jobs:
       DB_DATABASE: msa_app
       DB_USERNAME: root
       DB_PASSWORD: password
+      OPENAI_API_KEY: fake_test_key
 
     steps:
       - uses: actions/checkout@v3
