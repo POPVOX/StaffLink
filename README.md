@@ -1,4 +1,4 @@
-### StaffUp Portal 🏛️💬
+### StaffLink Portal 🏛️💬
 
 A modern AI-powered chatbot for congressional staffers, built with Laravel, Livewire, OpenAI, and Pinecone.
 
