@@ -7,7 +7,7 @@ A modern AI-powered chatbot for congressional staffers, built with Laravel, Live
 ---
 
 #### 📌 Features
-✅ AI Chatbot – Uses OpenAI GPT-4 Turbo for staff assistance
+✅ AI Chatbot – Uses OpenAI GPT-4o for staff assistance
 
 ✅ Knowledge Retrieval – Pulls information from Pinecone for accurate answers
 
