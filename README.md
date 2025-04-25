@@ -1,6 +1,6 @@
 ### StaffLink Portal 🏛️💬
 
-A modern AI-powered chatbot for congressional staffers, built with Laravel, Livewire, OpenAI, and Pinecone.
+A modern AI-powered chatbot for junior Congressional staffers, built with Laravel, Livewire, OpenAI, and Pinecone.
 
 ![CI](https://github.com/POPVOX/StaffUp/actions/workflows/ci.yml/badge.svg)
 
