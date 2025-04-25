@@ -23,5 +23,5 @@ A modern AI-powered chatbot for congressional staffers, built with Laravel, Live
 * Laravel 11 – Backend framework
 * Livewire v3 – Real-time interactivity
 * Pinecone – Vector database for document retrieval
-* OpenAI GPT-4 Turbo – AI chatbot responses
+* OpenAI GPT-4o – AI chatbot responses
 * Flux UI – Tailwind-based UI framework
