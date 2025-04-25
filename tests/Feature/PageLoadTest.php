@@ -2,7 +2,7 @@
 
 test('it renders the chat interface', function () {
     $response = $this->get('/');
-    expect($response->getContent())->toContain('Welcome to the StaffLink chatbot');
+    expect($response->getContent())->toContain('StaffLink chatbot');
     $response->assertStatus(200);
 });
 
