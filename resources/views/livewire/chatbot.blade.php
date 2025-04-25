@@ -1,11 +1,10 @@
 <flux:main class="flex flex-col items-center justify-center h-screen bg-sky-50 dark:bg-sky-900 px-2">
     <div class="flex flex-col w-full max-w-md sm:max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-lg p-2 sm:p-6 h-full">
         <flux:heading size="xl" level="1" class="text-center text-sky-700 dark:text-sky-300 mt-4">
-            <span id="greeting">Hello!</span>
+            <span id="greeting">StaffLink chatbot</span>
         </flux:heading>
         <flux:subheading size="lg" class="text-center text-gray-600 dark:text-gray-400 mb-4">
-            Welcome to the StaffLink chatbot
-        </flux:subheading>
+            An experimental tool with information relevant to the work of junior staff in the U.S. Congress.        </flux:subheading>
         <flux:separator variant="subtle" class="mb-4" />
 
         <div
@@ -142,7 +141,7 @@
                         x-ref="chatInput"
                         x-init="() => { if (@entangle('message')) $refs.chatInput.focus() }"
                         wire:model.defer="message"
-                        placeholder="Type your message..."
+                        placeholder="Enter your question..."
                     />
                     <flux:button type="submit" icon="plus" variant="primary">Send</flux:button>
                 </flux:input.group>
@@ -186,25 +185,6 @@
 
 @script
 <script>
-    window.updateGreeting = function() {
-        const currentHour = new Date().getHours();
-        let greeting = '';
-
-        if (currentHour < 12) {
-            greeting = 'Good morning!';
-        } else if (currentHour < 18) {
-            greeting = 'Good afternoon!';
-        } else {
-            greeting = 'Good evening!';
-        }
-
-        const greetingEl = document.getElementById('greeting');
-
-        if (greetingEl) {
-            greetingEl.textContent = greeting;
-        }
-    };
-
     window.updateTimestamps = function() {
         document.querySelectorAll('.timestamp').forEach(el => {
             const utcTime = el.getAttribute('data-utc');

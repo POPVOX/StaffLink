@@ -102,7 +102,7 @@
         <flux:separator class="my-2" variant="subtle" />
 
         <div class="px-2 text-xs text-gray-600 dark:text-gray-400 text-center">
-            &copy; {{ now()->year }} <flux:link href="https://popvox.org/" class="text-pvox-link-dark">The POPVOX Foundation</flux:link>
+            &copy; {{ now()->year }} <flux:link href="https://popvox.org/" class="text-pvox-link-dark">POPVOX Foundation</flux:link>
         </div>
     </flux:navlist>
 </flux:sidebar>
