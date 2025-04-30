@@ -26,6 +26,9 @@ beforeEach(function () {
 
     $retrieval = Mockery::mock(RetrievalService::class);
     $retrieval
+        ->shouldReceive('getCorrectionForQuery')
+        ->andReturn(null);
+    $retrieval
         ->shouldReceive('retrieveContextForQuery')
         ->andReturn('');
     app()->instance(RetrievalService::class, $retrieval);

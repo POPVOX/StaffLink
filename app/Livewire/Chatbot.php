@@ -41,7 +41,7 @@ class Chatbot extends Component
             ]);
             Session::put('chat_session_id', $this->conversation->session_id);
 
-            $welcome = Message::create([
+            Message::create([
                 'conversation_id' => $this->conversation->id,
                 'role'            => 'assistant',
                 'content'         => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
@@ -75,37 +75,53 @@ class Chatbot extends Component
         $this->dispatch('scrollToBottom');
 
         $userMessage = $this->message;
-        $this->message = '';
+        $this->message   = '';
+
+        // defer to the async handler
         $this->dispatch('generateBotResponse', $userMessage)->self();
     }
 
     #[\Livewire\Attributes\On('generateBotResponse')]
     public function generateBotResponse(string $userMessage)
     {
-        $retrievedText = app(RetrievalService::class)
-            ->retrieveContextForQuery($userMessage);
+        $retrieval   = app(RetrievalService::class);
+        $correction  = $retrieval->getCorrectionForQuery($userMessage);
+        $retrieved   = $retrieval->retrieveContextForQuery($userMessage);
 
-        $messages = array_merge(
-            [
-                ['role' => 'system', 'content' => $this->systemPrompt()],
-            ],
-            $this->getConversationHistory(),          // <-- your helper
-            [
-                ['role' => 'user', 'content' => $userMessage],
-            ]
-        );
+        // build prompt with system, correction, context, history, then user
+        $messages = [
+            ['role' => 'system', 'content' => $this->systemPrompt()],
+        ];
 
-        if (! empty($retrievedText)) {
+        if ($correction) {
             $messages[] = [
                 'role'    => 'system',
-                'content' => "Reference Material:\n{$retrievedText}",
+                'content' => "<strong>Correction (priority {$correction->priority}):</strong>\n\n{$correction->answer_text}",
             ];
         }
+
+        if (! empty($retrieved)) {
+            $messages[] = [
+                'role'    => 'system',
+                'content' => "Reference Material:\n{$retrieved}",
+            ];
+        }
+
+        // include full conversation history
+        foreach ($this->getConversationHistory() as $entry) {
+            $messages[] = $entry;
+        }
+
+        // finally, the new user message
+        $messages[] = [
+            'role'    => 'user',
+            'content' => $userMessage,
+        ];
 
         try {
             $botResponse = app(OpenAIService::class)
                 ->getChatResponse($messages);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $botResponse = "I'm having trouble responding right now.";
         }
 
@@ -127,7 +143,6 @@ class Chatbot extends Component
      */
     protected function saveEmbedding(Message $msg): void
     {
-        // get only the float[] from OpenAI
         $vector = app(OpenAIService::class)
             ->getEmbeddingVector($msg->content);
 
@@ -138,7 +153,6 @@ class Chatbot extends Component
             );
         }
     }
-
 
     public function submitFeedback()
     {
