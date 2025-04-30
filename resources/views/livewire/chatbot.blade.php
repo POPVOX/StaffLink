@@ -205,7 +205,6 @@
 
     $wire.on('scrollToBottom', () => {
         window.updateTimestamps();
-        window.updateGreeting();
 
         const container = document.getElementById('chatbox');
         setTimeout(() => {
@@ -217,12 +216,10 @@
 
     document.addEventListener('livewire:update', () => {
         window.updateTimestamps();
-        window.updateGreeting();
     });
 
     document.addEventListener('livewire:load', () => {
         window.updateTimestamps();
-        window.updateGreeting();
     });
 </script>
 @endscript
