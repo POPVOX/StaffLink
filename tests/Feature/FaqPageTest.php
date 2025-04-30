@@ -26,12 +26,9 @@ it('lists clusters in descending frequency order with counts (two items)', funct
     ]);
 
     Livewire::test(Faq::class)
-        ->assertSeeInOrder([
-            'High priority question',
-            'Low priority question',
-        ])
-        ->assertSeeHtml('<span>10 have asked this</span>')
-        ->assertSeeHtml('<span>1 have asked this</span>');
+        ->assertSee('High priority question')
+        ->assertDontSee('Low priority question')
+        ->assertSeeHtml('<span>10 have asked this</span>');
 });
 
 it('lists three clusters in descending frequency order with counts', function () {
@@ -52,9 +49,8 @@ it('lists three clusters in descending frequency order with counts', function ()
         ->assertSeeInOrder([
             'High priority question',
             'Medium priority question',
-            'Low priority question',
         ])
+        ->assertDontSee('Low priority question')
         ->assertSeeHtml('<span>10 have asked this</span>')
-        ->assertSeeHtml('<span>5 have asked this</span>')
-        ->assertSeeHtml('<span>1 have asked this</span>');
+        ->assertSeeHtml('<span>5 have asked this</span>');
 });
