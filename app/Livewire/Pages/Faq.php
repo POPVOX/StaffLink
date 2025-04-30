@@ -11,7 +11,9 @@ class Faq extends Component
 
     public function mount()
     {
-        $this->faqs = FaqCluster::orderByDesc('frequency')->get();
+        $this->faqs = FaqCluster::where('frequency', '>=', 4)
+            ->orderByDesc('frequency')
+            ->get();
     }
 
     public function render()

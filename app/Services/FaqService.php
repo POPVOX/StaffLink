@@ -95,6 +95,11 @@ class FaqService
             // ask the LLM for one representative FAQ question
             $repQuestion = $this->craftRepresentativeQuestion($sampleTexts);
 
+            // skip cluster if moderation flagged
+            if (trim(strtolower($repQuestion)) === 'inappropriate content detected') {
+                continue;
+            }
+
             // persist
             $faq = FaqCluster::create([
                 'representative_text' => $repQuestion,
@@ -129,12 +134,38 @@ We have grouped these user‐submitted questions because they all ask about the 
 Please write **one** clear, concise FAQ‐style question that covers the overall topic of all these submissions.
 PROMPT;
 
+        // Build base messages
         $messages = [
             ['role' => 'system', 'content' => 'You are a helpful assistant that writes FAQ questions.'],
-            ['role' => 'user',   'content' => $prompt],
+            ['role' => 'user',   'content' => $prompt . "\n\nPlease respond with only the final question, and nothing else."],
         ];
 
-        return trim($this->openAI->getChatResponse($messages));
+        // Call the API
+        $raw = $this->openAI->getChatResponse($messages);
+
+        // Extract and return just the question portion
+        return $this->extractQuestion($raw);
+    }
+
+    /**
+     * Pulls out just the question text from an LLM response, e.g.:
+     *   “Here’s your FAQ: “What is X?” Let me know if you need more”
+     * → “What is X?”
+     */
+    private function extractQuestion(string $text): string
+    {
+        // 1) Try to capture text inside quotes ending with a “?”
+        if (preg_match('/[“"“]([^”"‘]*\?)[”"‘]/u', $text, $m)) {
+            return trim($m[1]);
+        }
+
+        // 2) Fallback: take everything up to and including the first “?”
+        if (false !== $pos = strpos($text, '?')) {
+            return trim(substr($text, 0, $pos + 1));
+        }
+
+        // 3) If no “?” found, just return the whole thing (trimmed)
+        return trim($text);
     }
 
     protected function dot(array $a, array $b): float
