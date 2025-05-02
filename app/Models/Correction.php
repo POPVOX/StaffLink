@@ -8,7 +8,6 @@ class Correction extends Model
 {
     protected $fillable = [
         'question_pattern',
-        'keywords',
         'answer_text',
         'priority',
         'active',
@@ -19,4 +18,9 @@ class Correction extends Model
         'active'            => 'boolean',
         'example_embedding' => 'array',
     ];
+
+    public function keywords(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Keyword::class);
+    }
 }

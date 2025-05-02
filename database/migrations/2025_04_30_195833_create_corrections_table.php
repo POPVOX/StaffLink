@@ -12,8 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('question_pattern')->unique()
                 ->comment('A short “example” phrase to match against incoming queries');
-            $table->string('keywords')
-                ->comment('Comma-separated keywords to help human editors');
             $table->text('answer_text')
                 ->comment('The canonical override answer to use when matched');
             $table->integer('priority')->default(0)

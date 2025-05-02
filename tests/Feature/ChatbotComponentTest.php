@@ -39,15 +39,15 @@ afterEach(function () {
 });
 
 it('initializes a conversation with a welcome message and fires scrollToBottom', function () {
-    expect(Conversation::count())->toBe(0);
-    expect(Message::count())->toBe(0);
+    expect(Conversation::count())->toBe(0)
+        ->and(Message::count())->toBe(0);
 
     Livewire::test(Chatbot::class)
         ->assertSeeHtml('👋 Hi there!')
         ->assertDispatched('scrollToBottom');
 
-    expect(Conversation::count())->toBe(1);
-    expect(Message::count())->toBe(1);
+    expect(Conversation::count())->toBe(1)
+        ->and(Message::count())->toBe(1);
 });
 
 it('saves a user message, clears the input, shows typing, and fires scrollToBottom', function () {
@@ -80,8 +80,8 @@ it('generates a bot response, persists it, resets typing, and fires scrollToBott
 
     $assistantMessages = Message::where('role', 'assistant')->pluck('content')->toArray();
 
-    expect($assistantMessages)->toContain('🤖 Mock bot reply');
-    expect(count($assistantMessages))->toBe(2);
+    expect($assistantMessages)->toContain('🤖 Mock bot reply')
+        ->and(count($assistantMessages))->toBe(2);
 });
 
 it('stores embeddings for both user and bot messages', function () {

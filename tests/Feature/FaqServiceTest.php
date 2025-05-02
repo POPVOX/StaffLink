@@ -54,8 +54,8 @@ it('clusters similar questions and persists clusters using LLM output', function
     expect(FaqCluster::count())->toBe(1);
 
     $faq = FaqCluster::first();
-    expect($faq->representative_text)->toBe('How do I get my pay stub?');
-    expect($faq->frequency)->toBe(2);
+    expect($faq->representative_text)->toBe('How do I get my pay stub?')
+        ->and($faq->frequency)->toBe(2);
 
     // pivot links to msg1 & msg2 only
     $linked = DB::table('faq_cluster_message')
