@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use Flux\Flux;
 use Livewire\Component;
 use App\Models\Correction;
 use App\Models\Keyword;
@@ -94,6 +95,13 @@ class Corrections extends Component
         $correction->keywords()->sync($keywordIds);
 
         $this->showModal = false;
+
+        Flux::toast(
+            heading: 'Success!',
+            text:    'Your correction has been saved.',
+            variant: 'success'
+        );
+
         $this->loadCorrections();
     }
 
