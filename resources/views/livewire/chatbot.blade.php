@@ -139,7 +139,7 @@
                 <flux:input.group>
                     <flux:input
                         x-ref="chatInput"
-                        x-init="() => { if (@entangle('message')) $refs.chatInput.focus() }"
+                        x-init="$nextTick(() => $refs.chatInput.focus())"
                         wire:model.defer="message"
                         placeholder="Enter your question..."
                     />
