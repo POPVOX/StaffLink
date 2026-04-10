@@ -2,36 +2,30 @@
 
 namespace App\Services;
 
-use Probots\Pinecone\Client as PineconeClient;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 
 class PineconeService
 {
-    protected PineconeClient $pinecone;
-
-    public function __construct()
+    public function upsertVector(string $id, array $vector, array $metadata = []): Response
     {
-        $this->pinecone = new PineconeClient(config('services.pinecone.api_key'));
-        $this->pinecone->setIndexHost(config('services.pinecone.index_host'));
-    }
-
-    public function upsertVector(string $id, array $vector, array $metadata = [])
-    {
-        return $this->pinecone->data()->vectors()->upsert([
-            [
+        return $this->request()->post('/vectors/upsert', [
+            'vectors' => [[
                 'id' => $id,
-                'values' => $vector,
-                'metadata' => $metadata
-            ]
-        ]);
+                'values' => $this->normalizeVector($vector),
+                'metadata' => $metadata,
+            ]],
+        ])->throw();
     }
 
-    public function queryVector(array $vector, int $topK = 5)
+    public function queryVector(array $vector, int $topK = 5): Response
     {
-        return $this->pinecone->data()->vectors()->query([
+        return $this->request()->post('/query', [
             'vector' => $vector,
             'topK' => $topK,
-            'includeMetadata' => true
-        ]);
+            'includeMetadata' => true,
+        ])->throw();
     }
 
     public function storeChunks(array $chunks, string $documentId)
@@ -40,22 +34,24 @@ class PineconeService
         $batch = [];
 
         foreach ($chunks as $index => $chunk) {
-            $vector = $openAIService->generateEmbedding($chunk);
+            $vector = $openAIService->getEmbeddingVector($chunk);
+            $vector = $this->normalizeVector($vector);
 
-            // ✅ Ensure vector is valid before adding to batch
             if (!is_array($vector) || empty($vector) || !is_numeric($vector[0])) {
-                continue; // Skip invalid embeddings
+                continue;
             }
 
             $batch[] = [
                 'id' => "{$documentId}_chunk-{$index}",
-                'values' => array_map('floatval', $vector), // ✅ Ensure all values are floats
-                'metadata' => ['text' => $chunk, 'document_id' => $documentId]
+                'values' => $vector,
+                'metadata' => ['text' => $chunk, 'document_id' => $documentId],
             ];
         }
 
         if (!empty($batch)) {
-            return $this->pinecone->data()->vectors()->upsert($batch);
+            return $this->request()->post('/vectors/upsert', [
+                'vectors' => $batch,
+            ])->throw();
         }
 
         return false;
@@ -64,17 +60,46 @@ class PineconeService
     public function retrieveRelevantChunks(string $query, int $topK = 3): array
     {
         $openAIService = app(OpenAIService::class);
-        $embeddings = $openAIService->generateEmbedding($query);
+        $vector = $this->normalizeVector($openAIService->getEmbeddingVector($query));
 
-        $results = $this->pinecone->data()->vectors()->query(
-            vector: array_values($embeddings[0]->embedding),
-            topK: 5,
-            includeMetadata: true
-        )->json();
+        if ($vector === []) {
+            return [];
+        }
+
+        $results = $this->queryVector($vector, $topK)->json();
 
         return collect($results['matches'] ?? [])
             ->map(fn($match) => $match['metadata']['text'] ?? '')
             ->filter()
             ->toArray();
+    }
+
+    protected function request(): PendingRequest
+    {
+        return Http::baseUrl(rtrim((string) config('services.pinecone.index_host'), '/'))
+            ->acceptJson()
+            ->asJson()
+            ->withHeaders([
+                'Api-Key' => (string) config('services.pinecone.api_key'),
+            ]);
+    }
+
+    protected function normalizeVector(array $vector): array
+    {
+        if ($vector === []) {
+            return [];
+        }
+
+        if (is_numeric($vector[0] ?? null)) {
+            return array_map('floatval', $vector);
+        }
+
+        $embedding = $vector[0]->embedding ?? $vector[0]['embedding'] ?? [];
+
+        if (!is_array($embedding)) {
+            return [];
+        }
+
+        return array_map('floatval', array_values($embedding));
     }
 }
