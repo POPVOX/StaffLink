@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Conversation;
+use App\Models\Correction;
 use App\Models\Message;
 use App\Models\QuestionEmbedding;
 use App\Notifications\FeedbackSubmitted;
@@ -85,19 +86,32 @@ class Chatbot extends Component
     public function generateBotResponse(string $userMessage)
     {
         $retrieval   = app(RetrievalService::class);
-        $correction  = $retrieval->getCorrectionForQuery($userMessage);
-        $retrieved   = $retrieval->retrieveContextForQuery($userMessage);
+        $correction  = null;
+        $retrieved   = '';
+
+        try {
+            $correction = $retrieval->getCorrectionForQuery($userMessage);
+            $retrieved = $retrieval->retrieveContextForQuery($userMessage);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         // build prompt with system, correction, context, history, then user
         $messages = [
             ['role' => 'system', 'content' => $this->systemPrompt()],
         ];
 
-        if ($correction) {
+        if ($correction instanceof Correction) {
             $messages[] = [
                 'role'    => 'system',
                 'content' => "<strong>Correction (priority {$correction->priority}):</strong>\n\n{$correction->answer_text}",
             ];
+        } elseif ($correction !== null) {
+            report(new \UnexpectedValueException(sprintf(
+                'Expected correction to be an instance of %s, received %s.',
+                Correction::class,
+                get_debug_type($correction)
+            )));
         }
 
         if (! empty($retrieved)) {
@@ -122,6 +136,7 @@ class Chatbot extends Component
             $botResponse = app(OpenAIService::class)
                 ->getChatResponse($messages);
         } catch (\Throwable $e) {
+            report($e);
             $botResponse = "I'm having trouble responding right now.";
         }
 
@@ -143,8 +158,13 @@ class Chatbot extends Component
      */
     protected function saveEmbedding(Message $msg): void
     {
-        $vector = app(OpenAIService::class)
-            ->getEmbeddingVector($msg->content);
+        try {
+            $vector = app(OpenAIService::class)
+                ->getEmbeddingVector($msg->content);
+        } catch (\Throwable $e) {
+            report($e);
+            return;
+        }
 
         if (! empty($vector)) {
             QuestionEmbedding::updateOrCreate(

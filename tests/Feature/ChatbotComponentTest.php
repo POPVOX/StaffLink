@@ -84,6 +84,66 @@ it('generates a bot response, persists it, resets typing, and fires scrollToBott
         ->and(count($assistantMessages))->toBe(2);
 });
 
+it('stores a fallback reply when the chat model request fails', function () {
+    $openAi = Mockery::mock(OpenAIService::class);
+    $openAi
+        ->shouldReceive('getEmbeddingVector')
+        ->andReturn([0.1, 0.2, 0.3]);
+    $openAi
+        ->shouldReceive('getChatResponse')
+        ->andThrow(new RuntimeException('model unavailable'));
+    app()->instance(OpenAIService::class, $openAi);
+
+    Livewire::test(Chatbot::class)
+        ->set('message', 'Hello bot')
+        ->call('sendMessage')
+        ->call('generateBotResponse', 'Hello bot')
+        ->assertSet('botTyping', false);
+
+    expect(
+        Message::where('role', 'assistant')->latest('id')->value('content')
+    )->toBe("I'm having trouble responding right now.");
+});
+
+it('ignores malformed correction results and still generates a reply', function () {
+    $retrieval = Mockery::mock(RetrievalService::class);
+    $retrieval
+        ->shouldReceive('getCorrectionForQuery')
+        ->andReturn('bad correction payload');
+    $retrieval
+        ->shouldReceive('retrieveContextForQuery')
+        ->andReturn('');
+    app()->instance(RetrievalService::class, $retrieval);
+
+    Livewire::test(Chatbot::class)
+        ->set('message', 'Hello bot')
+        ->call('sendMessage')
+        ->call('generateBotResponse', 'Hello bot')
+        ->assertSet('botTyping', false);
+
+    expect(
+        Message::where('role', 'assistant')->latest('id')->value('content')
+    )->toBe('🤖 Mock bot reply');
+});
+
+it('continues without retrieval context when retrieval fails', function () {
+    $retrieval = Mockery::mock(RetrievalService::class);
+    $retrieval
+        ->shouldReceive('getCorrectionForQuery')
+        ->andThrow(new RuntimeException('retrieval failed'));
+    app()->instance(RetrievalService::class, $retrieval);
+
+    Livewire::test(Chatbot::class)
+        ->set('message', 'Hello bot')
+        ->call('sendMessage')
+        ->call('generateBotResponse', 'Hello bot')
+        ->assertSet('botTyping', false);
+
+    expect(
+        Message::where('role', 'assistant')->latest('id')->value('content')
+    )->toBe('🤖 Mock bot reply');
+});
+
 it('stores embeddings for both user and bot messages', function () {
     Livewire::test(Chatbot::class)
         ->set('message', 'Test embedding')

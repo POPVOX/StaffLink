@@ -35,8 +35,14 @@ return [
         ],
     ],
 
+    'openai' => [
+        'key' => env('OPENAI_API_KEY', ''),
+        'chat_model' => env('OPENAI_CHAT_MODEL', 'gpt-4.1-mini'),
+        'embedding_model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-ada-002'),
+    ],
+
     'openapi' => [
-        'key' => env('OPENAI_API_KEY', '')
+        'key' => env('OPENAI_API_KEY', ''),
     ],
 
     'pinecone' => [
