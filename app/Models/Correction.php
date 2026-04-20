@@ -14,10 +14,13 @@ class Correction extends Model
         'example_embedding',
     ];
 
-    protected $casts = [
-        'active' => 'boolean',
-        'example_embedding' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'example_embedding' => 'array',
+        ];
+    }
 
     public function keywords(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

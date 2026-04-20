@@ -10,9 +10,12 @@ class QuestionEmbedding extends Model
 
     protected $fillable = ['message_id', 'embedding'];
 
-    protected $casts = [
-        'embedding' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'embedding' => 'array',
+        ];
+    }
 
     public function message()
     {
