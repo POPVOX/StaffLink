@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\FaqCluster;
 use App\Models\QuestionEmbedding;
-use App\Services\OpenAIService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -26,10 +25,10 @@ class FaqService
         // 1) load embeddings + texts
         $items = QuestionEmbedding::with('message')
             ->get()
-            ->map(fn($qe) => [
-                'id'     => $qe->message_id,
+            ->map(fn ($qe) => [
+                'id' => $qe->message_id,
                 'vector' => $qe->embedding,
-                'text'   => $qe->message->content,
+                'text' => $qe->message->content,
             ]);
 
         $clusters = [];
@@ -42,7 +41,7 @@ class FaqService
             }
 
             $clusters[] = [
-                'members'  => [$item],
+                'members' => [$item],
                 'centroid' => $item['vector'],
             ];
             $clusterKey = array_key_last($clusters);
@@ -103,7 +102,7 @@ class FaqService
             // persist
             $faq = FaqCluster::create([
                 'representative_text' => $repQuestion,
-                'frequency'           => count($members),
+                'frequency' => count($members),
             ]);
 
             // pivot links
@@ -123,7 +122,7 @@ class FaqService
     protected function craftRepresentativeQuestion(array $sampleQuestions): string
     {
         $bulletList = implode("\n", array_map(
-            fn(string $q) => "- “{$q}”",
+            fn (string $q) => "- “{$q}”",
             $sampleQuestions
         ));
 
@@ -137,7 +136,7 @@ PROMPT;
         // Build base messages
         $messages = [
             ['role' => 'system', 'content' => 'You are a helpful assistant that writes FAQ questions.'],
-            ['role' => 'user',   'content' => $prompt . "\n\nPlease respond with only the final question, and nothing else."],
+            ['role' => 'user',   'content' => $prompt."\n\nPlease respond with only the final question, and nothing else."],
         ];
 
         // Call the API
@@ -170,12 +169,12 @@ PROMPT;
 
     protected function dot(array $a, array $b): float
     {
-        return array_sum(array_map(fn($x, $y) => $x * $y, $a, $b));
+        return array_sum(array_map(fn ($x, $y) => $x * $y, $a, $b));
     }
 
     protected function magnitude(array $v): float
     {
-        return sqrt(array_sum(array_map(fn($x) => $x * $x, $v)));
+        return sqrt(array_sum(array_map(fn ($x) => $x * $x, $v)));
     }
 
     public function cosineSimilarity(array $a, array $b): float
@@ -186,7 +185,7 @@ PROMPT;
     protected function averageVectors(array $current, array $next, int $n): array
     {
         return array_map(
-            fn($old, $new) => (($old * ($n - 1)) + $new) / $n,
+            fn ($old, $new) => (($old * ($n - 1)) + $new) / $n,
             $current,
             $next
         );

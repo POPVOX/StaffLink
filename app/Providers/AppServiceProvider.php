@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
                 // Replace bindings in SQL for complete query
                 foreach ($bindings as $binding) {
-                    $value = is_numeric($binding) ? $binding : "'" . addslashes($binding) . "'";
+                    $value = is_numeric($binding) ? $binding : "'".addslashes($binding)."'";
                     $sql = preg_replace('/\?/', $value, $sql, 1);
                 }
 

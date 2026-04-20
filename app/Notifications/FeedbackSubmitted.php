@@ -3,10 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Slack\SlackMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Slack\SlackMessage;
 
 class FeedbackSubmitted extends Notification
 {
@@ -16,12 +15,13 @@ class FeedbackSubmitted extends Notification
      * Create a new notification instance.
      */
     public string $sessionId;
+
     public string $details;
 
     public function __construct(string $sessionId, string $details)
     {
         $this->sessionId = $sessionId;
-        $this->details   = $details;
+        $this->details = $details;
     }
 
     /**
@@ -40,11 +40,9 @@ class FeedbackSubmitted extends Notification
             ->to(config('services.slack.notifications.channel'))
             ->text('📣 New user feedback received')
             ->dividerBlock()
-            ->sectionBlock(fn ($block) =>
-            $block->text("*Session ID:* `{$this->sessionId}`")
+            ->sectionBlock(fn ($block) => $block->text("*Session ID:* `{$this->sessionId}`")
             )
-            ->sectionBlock(fn ($block) =>
-            $block->text("*Feedback Details:*\n{$this->details}")
+            ->sectionBlock(fn ($block) => $block->text("*Feedback Details:*\n{$this->details}")
             );
     }
 
@@ -54,9 +52,9 @@ class FeedbackSubmitted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**

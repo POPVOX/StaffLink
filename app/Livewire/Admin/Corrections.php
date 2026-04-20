@@ -2,27 +2,36 @@
 
 namespace App\Livewire\Admin;
 
-use Flux\Flux;
-use Livewire\Component;
 use App\Models\Correction;
 use App\Models\Keyword;
+use Flux\Flux;
 use Illuminate\Validation\Rule;
+use Livewire\Component;
 
 class Corrections extends Component
 {
     public $corrections;
 
-    public $showModal    = false;
-    public $modalMode    = 'create'; // or 'edit'
-    public $allKeywords      = [];
+    public $showModal = false;
+
+    public $modalMode = 'create'; // or 'edit'
+
+    public $allKeywords = [];
+
     public $selectedKeywords = [];
+
     public ?Correction $editing = null;
 
     public $question_pattern = '';
-    public $answer_text      = '';
-    public $priority         = 0;
-    public $active           = true;
-    public $showAddNew       = false;
+
+    public $answer_text = '';
+
+    public $priority = 0;
+
+    public $active = true;
+
+    public $showAddNew = false;
+
     public string $newKeyword = '';
 
     protected function rules(): array
@@ -33,13 +42,13 @@ class Corrections extends Component
         }
 
         return [
-            'question_pattern'   => ['required','string',$uniqueRule],
-            'selectedKeywords'   => ['required','array'],
-            'selectedKeywords.*' => ['integer','exists:keywords,id'],
-            'answer_text'        => ['required','string'],
-            'priority'           => ['required','integer','min:0'],
-            'active'             => ['boolean'],
-            'newKeyword'         => ['nullable','string','max:50','unique:keywords,name'],
+            'question_pattern' => ['required', 'string', $uniqueRule],
+            'selectedKeywords' => ['required', 'array'],
+            'selectedKeywords.*' => ['integer', 'exists:keywords,id'],
+            'answer_text' => ['required', 'string'],
+            'priority' => ['required', 'integer', 'min:0'],
+            'active' => ['boolean'],
+            'newKeyword' => ['nullable', 'string', 'max:50', 'unique:keywords,name'],
         ];
     }
 
@@ -68,14 +77,14 @@ class Corrections extends Component
 
     public function edit(Correction $correction)
     {
-        $this->editing          = $correction;
+        $this->editing = $correction;
         $this->question_pattern = $correction->question_pattern;
         $this->selectedKeywords = $correction->keywords()->pluck('id')->toArray();
-        $this->answer_text      = $correction->answer_text;
-        $this->priority         = $correction->priority;
-        $this->active           = $correction->active;
-        $this->modalMode        = 'edit';
-        $this->showModal        = true;
+        $this->answer_text = $correction->answer_text;
+        $this->priority = $correction->priority;
+        $this->active = $correction->active;
+        $this->modalMode = 'edit';
+        $this->showModal = true;
     }
 
     public function save()
@@ -98,7 +107,7 @@ class Corrections extends Component
 
         Flux::toast(
             heading: 'Success!',
-            text:    'Your correction has been saved.',
+            text: 'Your correction has been saved.',
             variant: 'success'
         );
 
@@ -136,12 +145,12 @@ class Corrections extends Component
 
     private function resetForm()
     {
-        $this->editing          = null;
+        $this->editing = null;
         $this->question_pattern = '';
         $this->selectedKeywords = [];
-        $this->answer_text      = '';
-        $this->priority         = 0;
-        $this->active           = true;
+        $this->answer_text = '';
+        $this->priority = 0;
+        $this->active = true;
     }
 
     public function resetModalState(): void
@@ -157,7 +166,7 @@ class Corrections extends Component
             'answer_text',
             'priority',
             'active',
-            'showAddNew'
+            'showAddNew',
         ]);
     }
 

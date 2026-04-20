@@ -15,7 +15,7 @@ class Correction extends Model
     ];
 
     protected $casts = [
-        'active'            => 'boolean',
+        'active' => 'boolean',
         'example_embedding' => 'array',
     ];
 

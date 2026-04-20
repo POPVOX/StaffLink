@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class FaqCluster extends Model
 {
     protected $table = 'faq_clusters';
+
     protected $fillable = ['representative_text', 'frequency'];
 
     public function messages()

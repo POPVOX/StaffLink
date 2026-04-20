@@ -3,18 +3,17 @@
 namespace App\Services;
 
 use App\Models\Correction;
-use App\Services\PineconeService;
-use App\Services\OpenAIService;
 
 class RetrievalService
 {
     protected PineconeService $pineconeService;
+
     protected OpenAIService $openAI;
 
     public function __construct(PineconeService $pineconeService, OpenAIService $openAI)
     {
         $this->pineconeService = $pineconeService;
-        $this->openAI          = $openAI;
+        $this->openAI = $openAI;
     }
 
     /**
@@ -37,7 +36,7 @@ class RetrievalService
         $queryVec = $this->openAI->getEmbeddingVector($query);
 
         // 3) find the best match by cosine similarity; tie-break on priority
-        $best    = null;
+        $best = null;
         $bestSim = 0.0;
 
         foreach ($candidates as $corr) {
@@ -54,7 +53,7 @@ class RetrievalService
                 || ($sim === $bestSim && $corr->priority > $best->priority)
             ) {
                 $bestSim = $sim;
-                $best    = $corr;
+                $best = $corr;
             }
         }
 
@@ -78,17 +77,18 @@ class RetrievalService
 
     protected function dot(array $a, array $b): float
     {
-        return array_sum(array_map(fn($x, $y) => $x * $y, $a, $b));
+        return array_sum(array_map(fn ($x, $y) => $x * $y, $a, $b));
     }
 
     protected function magnitude(array $v): float
     {
-        return sqrt(array_sum(array_map(fn($x) => $x * $x, $v)));
+        return sqrt(array_sum(array_map(fn ($x) => $x * $x, $v)));
     }
 
     protected function cosineSimilarity(array $a, array $b): float
     {
         $den = $this->magnitude($a) * $this->magnitude($b);
+
         return $den > 0 ? $this->dot($a, $b) / $den : 0;
     }
 }

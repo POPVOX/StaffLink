@@ -12,16 +12,20 @@ use App\Services\RetrievalService;
 use Flux\Flux;
 use Illuminate\Notifications\Slack\SlackRoute;
 use Illuminate\Support\Facades\Notification;
-use Livewire\Component;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Livewire\Component;
 
 class Chatbot extends Component
 {
     public Conversation $conversation;
+
     public string $message = '';
+
     public bool $botTyping = false;
+
     public string $feedbackDetails = '';
+
     public $queryString = [
         'message' => ['except' => ''],
     ];
@@ -44,8 +48,8 @@ class Chatbot extends Component
 
             Message::create([
                 'conversation_id' => $this->conversation->id,
-                'role'            => 'assistant',
-                'content'         => "<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>",
+                'role' => 'assistant',
+                'content' => '<p>👋 Hi there! I am a ChatBot trained on publicly available information from official sources and publications of the Modernization Staff Association. I can help answer questions about issues faced by junior Congressional staffers.</p>',
             ]);
         }
 
@@ -65,8 +69,8 @@ class Chatbot extends Component
 
         $userMsg = Message::create([
             'conversation_id' => $this->conversation->id,
-            'content'         => $this->message,
-            'role'            => 'user',
+            'content' => $this->message,
+            'role' => 'user',
         ]);
 
         $this->saveEmbedding($userMsg);
@@ -76,7 +80,7 @@ class Chatbot extends Component
         $this->dispatch('scrollToBottom');
 
         $userMessage = $this->message;
-        $this->message   = '';
+        $this->message = '';
 
         // defer to the async handler
         $this->dispatch('generateBotResponse', $userMessage)->self();
@@ -85,9 +89,9 @@ class Chatbot extends Component
     #[\Livewire\Attributes\On('generateBotResponse')]
     public function generateBotResponse(string $userMessage)
     {
-        $retrieval   = app(RetrievalService::class);
-        $correction  = null;
-        $retrieved   = '';
+        $retrieval = app(RetrievalService::class);
+        $correction = null;
+        $retrieved = '';
 
         try {
             $correction = $retrieval->getCorrectionForQuery($userMessage);
@@ -103,7 +107,7 @@ class Chatbot extends Component
 
         if ($correction instanceof Correction) {
             $messages[] = [
-                'role'    => 'system',
+                'role' => 'system',
                 'content' => "<strong>Correction (priority {$correction->priority}):</strong>\n\n{$correction->answer_text}",
             ];
         } elseif ($correction !== null) {
@@ -116,7 +120,7 @@ class Chatbot extends Component
 
         if (! empty($retrieved)) {
             $messages[] = [
-                'role'    => 'system',
+                'role' => 'system',
                 'content' => "Reference Material:\n{$retrieved}",
             ];
         }
@@ -128,7 +132,7 @@ class Chatbot extends Component
 
         // finally, the new user message
         $messages[] = [
-            'role'    => 'user',
+            'role' => 'user',
             'content' => $userMessage,
         ];
 
@@ -142,8 +146,8 @@ class Chatbot extends Component
 
         $botMsg = Message::create([
             'conversation_id' => $this->conversation->id,
-            'content'         => $botResponse,
-            'role'            => 'assistant',
+            'content' => $botResponse,
+            'role' => 'assistant',
         ]);
 
         $this->saveEmbedding($botMsg);
@@ -163,13 +167,14 @@ class Chatbot extends Component
                 ->getEmbeddingVector($msg->content);
         } catch (\Throwable $e) {
             report($e);
+
             return;
         }
 
         if (! empty($vector)) {
             QuestionEmbedding::updateOrCreate(
                 ['message_id' => $msg->id],
-                ['embedding'  => $vector]
+                ['embedding' => $vector]
             );
         }
     }
@@ -179,11 +184,11 @@ class Chatbot extends Component
         $this->validate();
 
         $sessionId = $this->conversation->session_id;
-        $details   = $this->feedbackDetails;
+        $details = $this->feedbackDetails;
 
         Flux::toast(
             heading: 'Thank you',
-            text:    'Your feedback has been submitted.',
+            text: 'Your feedback has been submitted.',
             variant: 'success'
         );
 
@@ -205,7 +210,7 @@ class Chatbot extends Component
 
     public function systemPrompt(): string
     {
-        return <<<PROMPT
+        return <<<'PROMPT'
 Please provide responses using **HTML formatting** for improved readability. Follow these rules:
 - Use `<strong>` for bold headings.
 - Use `<ul><li>` for bulleted lists and `<ol><li>` for numbered lists.
@@ -225,8 +230,8 @@ PROMPT;
     private function getConversationHistory(): array
     {
         return $this->conversation->messages()->oldest()->get()
-            ->map(fn($m) => [
-                'role'    => $m->role === 'assistant' ? 'assistant' : 'user',
+            ->map(fn ($m) => [
+                'role' => $m->role === 'assistant' ? 'assistant' : 'user',
                 'content' => $m->content,
             ])->toArray();
     }

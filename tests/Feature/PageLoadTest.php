@@ -6,7 +6,6 @@ test('it renders the chat interface', function () {
     $response->assertStatus(200);
 });
 
-
 test('it renders the resources page', function () {
     $response = $this->get('/resources');
     expect($response->getContent())->toContain('Resources Referenced');
