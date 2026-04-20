@@ -1,3 +1,4 @@
+<div class="contents">
 <flux:main class="min-h-screen bg-white dark:bg-zinc-800">
     <div class="max-w-3xl px-6 py-4 sm:pt-6 lg:px-8 lg:py-8">
         <h2 class="text-pretty text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">About</h2>
@@ -21,3 +22,4 @@
         </p>
     </div>
 </flux:main>
+</div>

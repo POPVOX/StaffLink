@@ -1,3 +1,4 @@
+<div class="contents">
 <flux:main class="min-h-screen bg-white dark:bg-zinc-800">
     <div class="p-6 space-y-6">
 
@@ -184,3 +185,4 @@
 
     </div>
 </flux:main>
+</div>

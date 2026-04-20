@@ -20,5 +20,21 @@ yarn-error.log
 /.fleet
 /.idea
 /.nova
-/.vscode
+/.vscode/*
+!/.vscode/
+!/.vscode/mcp.json
 /.zed
+
+# Laravel Boost generated files
+/.agents
+/.claude
+/.codex
+/.cursor
+/.gemini
+/.junie
+/.kiro
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/boost.json
