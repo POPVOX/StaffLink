@@ -11,7 +11,7 @@
     @vite('resources/css/app.css')
     <title>{{ $title ?? 'StaffLink Chatbot' }}</title>
     @livewireStyles
-    @fluxStyles
+    @fluxAppearance
 
     <script>
         if (!localStorage.getItem('flux.appearance')) {
