@@ -12,7 +12,7 @@ class CorrectionsTableSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(OpenAIService $openAI)
+    public function run(OpenAIService $openAI): void
     {
         $rows = [
             [

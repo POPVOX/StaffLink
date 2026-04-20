@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 
 class FaqCluster extends Model
@@ -10,7 +11,7 @@ class FaqCluster extends Model
 
     protected $fillable = ['representative_text', 'frequency'];
 
-    public function messages()
+    public function messages(): BelongsToMany
     {
         return $this->belongsToMany(
             Message::class,

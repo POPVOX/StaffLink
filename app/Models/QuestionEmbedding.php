@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class QuestionEmbedding extends Model
@@ -17,7 +18,7 @@ class QuestionEmbedding extends Model
         ];
     }
 
-    public function message()
+    public function message(): BelongsTo
     {
         return $this->belongsTo(Message::class);
     }
