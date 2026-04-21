@@ -170,3 +170,9 @@ it('dispatches the correct toast when feedback is submitted', function () {
 
     Notification::assertSentTimes(FeedbackSubmitted::class, 1);
 });
+
+it('instructs the model not to use preformatted blocks for letters', function () {
+    $prompt = Livewire::test(Chatbot::class)->instance()->systemPrompt();
+
+    expect($prompt)->toContain('Do not use `<pre>` or code blocks for letters');
+});

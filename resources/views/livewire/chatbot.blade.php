@@ -64,7 +64,10 @@
                             <div class="assistant-text [&_*]:text-[15px] [&_*]:leading-[1.6] [&_p]:mb-2
                     [&_ul]:pl-5 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:marker:text-sky-400
                     dark:[&_ul]:marker:text-sky-500 [&_li]:mb-1
-                    [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300">
+                    [&_strong]:font-semibold [&_strong]:text-sky-800 dark:[&_strong]:text-sky-300
+                    [&_pre]:my-3 [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:rounded-md
+                    [&_pre]:bg-sky-50 [&_pre]:p-4 [&_pre]:font-sans [&_pre]:text-sky-900
+                    dark:[&_pre]:bg-sky-950/40 dark:[&_pre]:text-sky-100">
                                 {!! $message->content !!}
                             </div>
 
