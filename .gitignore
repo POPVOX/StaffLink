@@ -20,6 +20,18 @@ yarn-error.log
 /.fleet
 /.idea
 /.nova
+/.agents
+/.claude
+/.codex
+/.cursor
+/.gemini
+/.junie
+/.kiro
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/boost.json
 /.vscode
 /.zed
 
