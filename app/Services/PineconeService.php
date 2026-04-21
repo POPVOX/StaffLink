@@ -28,7 +28,7 @@ class PineconeService
         ])->throw();
     }
 
-    public function storeChunks(array $chunks, string $documentId)
+    public function storeChunks(array $chunks, string $documentId, array $metadata = [])
     {
         $openAIService = app(OpenAIService::class);
         $batch = [];
@@ -44,7 +44,7 @@ class PineconeService
             $batch[] = [
                 'id' => "{$documentId}_chunk-{$index}",
                 'values' => $vector,
-                'metadata' => ['text' => $chunk, 'document_id' => $documentId],
+                'metadata' => array_merge($metadata, ['text' => $chunk, 'document_id' => $documentId]),
             ];
         }
 
@@ -72,6 +72,74 @@ class PineconeService
             ->map(fn ($match) => $match['metadata']['text'] ?? '')
             ->filter()
             ->toArray();
+    }
+
+    public function listAllVectorIds(?string $prefix = null): array
+    {
+        $ids = [];
+        $paginationToken = null;
+
+        do {
+            $response = $this->request()->get('/vectors/list', array_filter([
+                'prefix' => $prefix,
+                'paginationToken' => $paginationToken,
+            ], fn ($value) => filled($value)))->throw()->json();
+
+            foreach ($response['vectors'] ?? [] as $vector) {
+                if (filled($vector['id'] ?? null)) {
+                    $ids[] = $vector['id'];
+                }
+            }
+
+            $paginationToken = $response['pagination']['next'] ?? null;
+        } while (filled($paginationToken));
+
+        return $ids;
+    }
+
+    public function fetchVector(string $id): array
+    {
+        return $this->request()
+            ->get('/vectors/fetch', ['ids' => $id])
+            ->throw()
+            ->json("vectors.{$id}", []);
+    }
+
+    public function fetchVectors(array $ids): array
+    {
+        $vectors = [];
+
+        foreach ($ids as $id) {
+            $vectors[$id] = $this->fetchVector($id);
+        }
+
+        return $vectors;
+    }
+
+    public function deleteVectors(array $ids): int
+    {
+        $ids = array_values(array_filter($ids));
+
+        if ($ids === []) {
+            return 0;
+        }
+
+        $deleted = 0;
+
+        foreach (array_chunk($ids, 100) as $chunk) {
+            $this->request()->post('/vectors/delete', [
+                'ids' => array_values($chunk),
+            ])->throw();
+
+            $deleted += count($chunk);
+        }
+
+        return $deleted;
+    }
+
+    public function deleteByPrefix(string $prefix): int
+    {
+        return $this->deleteVectors($this->listAllVectorIds($prefix));
     }
 
     protected function request(): PendingRequest

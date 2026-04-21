@@ -29,6 +29,61 @@ it('stores chunk embeddings in pinecone with the configured host', function () {
     });
 });
 
+it('lists vector ids across paginated results', function () {
+    config()->set('services.pinecone.api_key', 'test-key');
+    config()->set('services.pinecone.index_host', 'https://example-pinecone.test');
+
+    Http::fake([
+        'https://example-pinecone.test/vectors/list*' => Http::sequence()
+            ->push([
+                'vectors' => [
+                    ['id' => 'source_house_chunk-0'],
+                    ['id' => 'source_house_chunk-1'],
+                ],
+                'pagination' => ['next' => 'token-2'],
+            ], 200)
+            ->push([
+                'vectors' => [
+                    ['id' => 'source_house_chunk-2'],
+                ],
+                'pagination' => [],
+            ], 200),
+    ]);
+
+    $ids = app(PineconeService::class)->listAllVectorIds('source_house_chunk-');
+
+    expect($ids)->toBe([
+        'source_house_chunk-0',
+        'source_house_chunk-1',
+        'source_house_chunk-2',
+    ]);
+});
+
+it('deletes all vectors matching a prefix', function () {
+    config()->set('services.pinecone.api_key', 'test-key');
+    config()->set('services.pinecone.index_host', 'https://example-pinecone.test');
+
+    Http::fake([
+        'https://example-pinecone.test/vectors/list*' => Http::response([
+            'vectors' => [
+                ['id' => 'source_house_chunk-0'],
+                ['id' => 'source_house_chunk-1'],
+            ],
+            'pagination' => [],
+        ], 200),
+        'https://example-pinecone.test/vectors/delete' => Http::response([], 200),
+    ]);
+
+    $deleted = app(PineconeService::class)->deleteByPrefix('source_house_chunk-');
+
+    expect($deleted)->toBe(2);
+
+    Http::assertSent(function ($request) {
+        return $request->url() === 'https://example-pinecone.test/vectors/delete'
+            && $request['ids'] === ['source_house_chunk-0', 'source_house_chunk-1'];
+    });
+});
+
 it('returns matching chunk text from pinecone query results', function () {
     config()->set('services.pinecone.api_key', 'test-key');
     config()->set('services.pinecone.index_host', 'https://example-pinecone.test');

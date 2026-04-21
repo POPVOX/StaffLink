@@ -1,10 +1,22 @@
 <div class="contents">
 <flux:card>
     <flux:heading size="lg">Upload Document to RAG System</flux:heading>
+    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
+        Supports Google Docs, remote PDF URLs, and uploaded <code>.txt</code>/<code>.pdf</code> files.
+        Add a stable source key when you want future uploads to replace the same source cleanly.
+    </p>
 
     <form wire:submit.prevent="processDocument" class="space-y-4">
-        <flux:input wire:model.defer="url" placeholder="Paste Google Docs link here..." class="w-full" />
-        <flux:input type="file" wire:model="document" accept=".txt" class="w-full" />
+        <flux:input wire:model.defer="url" placeholder="Paste Google Docs or PDF URL here..." class="w-full" />
+        <flux:input wire:model.defer="sourceKey" placeholder="Stable source key, e.g. staff-assistant-lc-house" class="w-full" />
+        <flux:input wire:model.defer="sourceLabel" placeholder="Optional label, e.g. House SA/LC Guide 119th" class="w-full" />
+        <flux:textarea
+            wire:model.defer="legacyMatches"
+            rows="3"
+            placeholder="Optional legacy match snippets, one per line, to remove anonymous older docs"
+            class="w-full"
+        />
+        <flux:input type="file" wire:model="document" accept=".txt,.pdf" class="w-full" />
         <flux:button type="submit" icon="plus">Process Document</flux:button>
     </form>
 
