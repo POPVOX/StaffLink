@@ -2,17 +2,19 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Livewire\WithFileUploads;
 use App\Services\DocumentProcessingService;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ProcessGoogleDoc extends Component
 {
     use WithFileUploads;
 
     public string $url = '';
+
     public $document;
+
     public string $message = '';
 
     public function processDocument()
@@ -27,7 +29,8 @@ class ProcessGoogleDoc extends Component
             // Handle Google Docs
             $result = app(DocumentProcessingService::class)->processGoogleDoc($this->url);
         } else {
-            $this->message = "❌ Please provide a Google Docs link or upload a text file.";
+            $this->message = '❌ Please provide a Google Docs link or upload a text file.';
+
             return;
         }
 

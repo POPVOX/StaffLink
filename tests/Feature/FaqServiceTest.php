@@ -1,8 +1,8 @@
 <?php
 
+use App\Models\FaqCluster;
 use App\Models\Message;
 use App\Models\QuestionEmbedding;
-use App\Models\FaqCluster;
 use App\Services\FaqService;
 use App\Services\OpenAIService;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +27,6 @@ it('clusters similar questions and persists clusters using LLM output', function
     $far = [1, -1, 1, -1, 1];
     QuestionEmbedding::create(['message_id' => $msg3->id, 'embedding' => $far]);
 
-
     // mock the OpenAIService
     $mock = Mockery::mock(OpenAIService::class);
     $mock->shouldReceive('getChatResponse')
@@ -40,6 +39,7 @@ it('clusters similar questions and persists clusters using LLM output', function
             }
             // second message should contain both bullets exactly
             $c = $messages[1]['content'];
+
             return str_contains($c, '- “How do I request my pay stub?”')
                 && str_contains($c, '- “How can I access my pay stub or view my paycheck details?”');
         })

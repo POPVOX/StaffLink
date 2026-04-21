@@ -37,7 +37,7 @@ class PineconeService
             $vector = $openAIService->getEmbeddingVector($chunk);
             $vector = $this->normalizeVector($vector);
 
-            if (!is_array($vector) || empty($vector) || !is_numeric($vector[0])) {
+            if (! is_array($vector) || empty($vector) || ! is_numeric($vector[0])) {
                 continue;
             }
 
@@ -48,7 +48,7 @@ class PineconeService
             ];
         }
 
-        if (!empty($batch)) {
+        if (! empty($batch)) {
             return $this->request()->post('/vectors/upsert', [
                 'vectors' => $batch,
             ])->throw();
@@ -69,7 +69,7 @@ class PineconeService
         $results = $this->queryVector($vector, $topK)->json();
 
         return collect($results['matches'] ?? [])
-            ->map(fn($match) => $match['metadata']['text'] ?? '')
+            ->map(fn ($match) => $match['metadata']['text'] ?? '')
             ->filter()
             ->toArray();
     }
@@ -96,7 +96,7 @@ class PineconeService
 
         $embedding = $vector[0]->embedding ?? $vector[0]['embedding'] ?? [];
 
-        if (!is_array($embedding)) {
+        if (! is_array($embedding)) {
             return [];
         }
 

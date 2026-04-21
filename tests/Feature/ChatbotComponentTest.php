@@ -1,13 +1,13 @@
 <?php
 
-use App\Notifications\FeedbackSubmitted;
-use Illuminate\Support\Facades\Notification;
-use Livewire\Livewire;
 use App\Livewire\Chatbot;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Notifications\FeedbackSubmitted;
 use App\Services\OpenAIService;
 use App\Services\RetrievalService;
+use Illuminate\Support\Facades\Notification;
+use Livewire\Livewire;
 
 beforeEach(function () {
     Notification::fake();
@@ -15,7 +15,7 @@ beforeEach(function () {
     $openAi = Mockery::mock(OpenAIService::class);
     $openAi
         ->shouldReceive('generateEmbedding')
-        ->andReturn([ ['embedding' => [0.1, 0.2, 0.3] ] ]);
+        ->andReturn([['embedding' => [0.1, 0.2, 0.3]]]);
     $openAi
         ->shouldReceive('getEmbeddingVector')
         ->andReturn([0.1, 0.2, 0.3]);
@@ -164,6 +164,7 @@ it('dispatches the correct toast when feedback is submitted', function () {
             expect($params['slots']['heading'])->toBe('Thank you');
             expect($params['dataset']['variant'])->toBe('success');
             expect($params['duration'])->toBe(5000);
+
             return true;
         });
 

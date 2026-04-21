@@ -1,3 +1,4 @@
+<div class="contents">
 <flux:main class="min-h-screen bg-white dark:bg-zinc-800">
     <div class="mx-auto max-w-7xl px-6 py-4 sm:pt-6 lg:px-8 lg:py-8">
         <div class="lg:grid lg:grid-cols-12 lg:gap-12">
@@ -43,3 +44,4 @@
         </div>
     </div>
 </flux:main>
+</div>

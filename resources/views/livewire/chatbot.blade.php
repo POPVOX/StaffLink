@@ -1,3 +1,4 @@
+<div class="contents">
 <flux:main class="flex flex-col items-center justify-center h-screen bg-sky-50 dark:bg-sky-900 px-2">
     <div class="flex flex-col w-full max-w-md sm:max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-lg p-2 sm:p-6 h-full">
         <flux:heading size="xl" level="1" class="text-center text-sky-700 dark:text-sky-300 mt-4">
@@ -223,3 +224,4 @@
     });
 </script>
 @endscript
+</div>

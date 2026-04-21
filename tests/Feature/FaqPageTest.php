@@ -18,11 +18,11 @@ it('shows no items when there are no clusters', function () {
 it('lists clusters in descending frequency order with counts (two items)', function () {
     FaqCluster::create([
         'representative_text' => 'Low priority question',
-        'frequency'           => 1,
+        'frequency' => 1,
     ]);
     FaqCluster::create([
         'representative_text' => 'High priority question',
-        'frequency'           => 10,
+        'frequency' => 10,
     ]);
 
     Livewire::test(Faq::class)
@@ -34,15 +34,15 @@ it('lists clusters in descending frequency order with counts (two items)', funct
 it('lists three clusters in descending frequency order with counts', function () {
     FaqCluster::create([
         'representative_text' => 'Low priority question',
-        'frequency'           => 1,
+        'frequency' => 1,
     ]);
     FaqCluster::create([
         'representative_text' => 'Medium priority question',
-        'frequency'           => 5,
+        'frequency' => 5,
     ]);
     FaqCluster::create([
         'representative_text' => 'High priority question',
-        'frequency'           => 10,
+        'frequency' => 10,
     ]);
 
     Livewire::test(Faq::class)

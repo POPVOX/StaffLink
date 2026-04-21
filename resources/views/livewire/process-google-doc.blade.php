@@ -1,3 +1,4 @@
+<div class="contents">
 <flux:card>
     <flux:heading size="lg">Upload Document to RAG System</flux:heading>
 
@@ -16,3 +17,4 @@
         </div>
     @endif
 </flux:card>
+</div>

@@ -12,29 +12,29 @@ class CorrectionsTableSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(OpenAIService $openAI)
+    public function run(OpenAIService $openAI): void
     {
         $rows = [
             [
                 'question_pattern' => 'internship length',
-                'keywords'         => ['internship', 'months'],
-                'answer_text'      => 'House internships are limited to 4 months; Senate up to 5.',
-                'priority'         => 10,
-                'active'           => true,
+                'keywords' => ['internship', 'months'],
+                'answer_text' => 'House internships are limited to 4 months; Senate up to 5.',
+                'priority' => 10,
+                'active' => true,
             ],
         ];
 
         foreach ($rows as $data) {
             $corr = Correction::create([
                 'question_pattern' => $data['question_pattern'],
-                'answer_text'      => $data['answer_text'],
-                'priority'         => $data['priority'],
-                'active'           => $data['active'],
+                'answer_text' => $data['answer_text'],
+                'priority' => $data['priority'],
+                'active' => $data['active'],
             ]);
 
             // sync keywords pivot
             $keywordIds = collect($data['keywords'])
-                ->map(fn(string $kw) => Keyword::firstOrCreate(['name' => $kw])->id)
+                ->map(fn (string $kw) => Keyword::firstOrCreate(['name' => $kw])->id)
                 ->all();
             $corr->keywords()->sync($keywordIds);
 
